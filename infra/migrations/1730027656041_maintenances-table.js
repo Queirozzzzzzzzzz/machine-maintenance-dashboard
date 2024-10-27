@@ -8,9 +8,8 @@ exports.up = (pgm) => {
     },
 
     machine: {
-      type: "uuid",
+      type: "varchar(20)",
       notNull: true,
-      references: "machines(id)",
     },
 
     criticality: {
@@ -32,6 +31,7 @@ exports.up = (pgm) => {
     state: {
       type: "boolean",
       notNull: true,
+      default: false,
     },
 
     created_at: {
