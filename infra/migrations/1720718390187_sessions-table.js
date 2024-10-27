@@ -17,15 +17,15 @@ exports.up = (pgm) => {
       notNull: true,
     },
 
-    expires_at: {
-      type: "timestamp with time zone",
-      notNull: true,
-    },
-
     created_at: {
       type: "timestamp with time zone",
       notNull: true,
       default: pgm.func("(now() at time zone 'utc')"),
+    },
+
+    expires_at: {
+      type: "timestamp with time zone",
+      notNull: true,
     },
 
     updated_at: {
