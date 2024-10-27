@@ -1,0 +1,19 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* alert */
+.alert {
+  border: none;
+  border-radius: 0;
+  background-color: whitesmoke;
+}
+
+.alert.error {
+  color: red;
+}
+
+.alert.success {
+  color: green;
+}

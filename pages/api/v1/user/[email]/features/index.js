@@ -43,7 +43,6 @@ async function patchValidationHandler(req, res, next) {
 
 async function patchHandler(req, res) {
   const targetUser = await user.findByEmail(req.query.email);
-
   let updatedUser;
   try {
     updatedUser = await user.insertFeatures(targetUser.id, req.body.features);

@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useRef, useState } from "react";
+import { toast } from "sonner";
 
 export default function signup() {
   const router = useRouter();
@@ -38,19 +39,22 @@ export default function signup() {
     });
 
     if (res.status === 201) {
+      toast.success("Cadastro realizado com sucesso!", {
+        className: "alert success",
+        duration: 1000,
+      });
       router.push("/login");
       return;
     }
 
     const resBody = await res.json();
-    setErrorMessage(resBody.message);
+    toast.error(resBody.message, { className: "alert error", duration: 2000 });
   }
 
   return (
     <>
       <h1>Cadastro</h1>
       <button onClick={toLogin}>Login</button>
-      <p>{errorMessage}</p>
       <form onSubmit={signupOnSubmit}>
         <label htmlFor="fullName">Nome Completo</label>
         <input

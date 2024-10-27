@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useRef, useState } from "react";
 
 import { useUser } from "pages/interface";
+import { toast } from "sonner";
 
 export default function signup() {
   const router = useRouter();
@@ -34,12 +35,16 @@ export default function signup() {
     });
 
     if (res.status === 201) {
+      toast.success("Logado com sucesso!", {
+        className: "alert success",
+        duration: 1000,
+      });
       fetchUser();
       return;
     }
 
     const resBody = await res.json();
-    setErrorMessage(resBody.message);
+    toast.error(resBody.message, { className: "alert error", duration: 2000 });
   }
 
   return (
