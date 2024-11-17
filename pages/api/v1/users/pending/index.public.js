@@ -18,7 +18,7 @@ export default nextConnect({
 async function getHandler(req, res) {
   let users = [];
   try {
-    users = await user.findByFeature("read:activation_token");
+    users = await user.findByMissingFeature("active");
   } catch (err) {
     throw err;
   }

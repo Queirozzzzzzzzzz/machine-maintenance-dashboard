@@ -4,9 +4,7 @@ const availableFeatures = new Set([
   "read:user",
   "read:user:self",
   "update:user",
-
-  // ACTIVATION_TOKEN
-  "read:activation_token",
+  "active",
 
   // SESSION
   "create:session",

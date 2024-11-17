@@ -29,6 +29,12 @@ exports.up = (pgm) => {
       default: `{}`,
     },
 
+    role: {
+      type: "varchar(10)",
+      notNull: true,
+      check: "role IN ('technical', 'manager')",
+    },
+
     created_at: {
       type: "timestamp with time zone",
       notNull: true,

@@ -44,8 +44,8 @@ export default class RequestBuilder {
         "update:user",
         "update:user:others",
         "ban:user",
+        "active",
       ],
-      without: ["read:activation_token"],
     });
   }
 

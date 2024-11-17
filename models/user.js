@@ -6,11 +6,17 @@ async function create(data) {
   await validateUniqueEmail(data.email);
   await hashPasswordInObject(data);
 
-  data.features = ["read:session", "read:user", "read:activation_token"];
+  data.features = ["read:session", "read:user"];
 
   const query = {
-    text: `INSERT INTO users (full_name, email, password, features) VALUES ($1, $2, $3, $4) RETURNING *;`,
-    values: [data.full_name, data.email, data.password, data.features],
+    text: `INSERT INTO users (full_name, email, password, features, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
+    values: [
+      data.full_name,
+      data.email,
+      data.password,
+      data.features,
+      "technical",
+    ],
   };
 
   const res = await db.query(query);
@@ -53,8 +59,14 @@ async function createAdmin(data) {
   ];
 
   const query = {
-    text: `INSERT INTO users (full_name, email, password, features) VALUES ($1, $2, $3, $4) RETURNING *;`,
-    values: [data.full_name, data.email, data.password, data.features],
+    text: `INSERT INTO users (full_name, email, password, features, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
+    values: [
+      data.full_name,
+      data.email,
+      data.password,
+      data.features,
+      "manager",
+    ],
   };
 
   const res = await db.query(query);
@@ -170,6 +182,24 @@ async function findByFeature(feature) {
   return results.rows;
 }
 
+async function findByMissingFeature(feature) {
+  const query = {
+    text: `
+    SELECT *
+    FROM users
+    WHERE NOT ($1 = ANY(features));
+  ;`,
+    values: [feature],
+  };
+
+  const results = await db.query(query);
+
+  console.log(feature);
+  console.log(results.rows);
+
+  return results.rows;
+}
+
 async function removeByEmail(email) {
   const query = {
     text: `
@@ -264,6 +294,7 @@ export default {
   findByEmail,
   findByFullName,
   findByFeature,
+  findByMissingFeature,
   removeByEmail,
   createAnonymous,
   insertFeatures,
