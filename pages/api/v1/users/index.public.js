@@ -14,6 +14,7 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
+  .get(authorization.canRequest("read:users"), getHandler)
   .post(
     postValidationHandler,
     authorization.canRequest("create:user"),
@@ -63,4 +64,15 @@ async function postHandler(req, res) {
   );
 
   return res.status(201).json(secureOutputValues);
+}
+
+async function getHandler(req, res) {
+  let users = [];
+  try {
+    users = await user.findAll();
+  } catch (err) {
+    throw err;
+  }
+
+  return res.status(200).json(users);
 }

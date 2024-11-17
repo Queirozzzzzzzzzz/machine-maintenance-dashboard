@@ -88,9 +88,9 @@ async function validateUniqueEmail(email) {
     values: [email],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  if (results.rowCount > 0) {
+  if (res.rowCount > 0) {
     throw new ValidationError({
       message: `O "email" informado já está sendo usado.`,
       stack: new Error().stack,
@@ -111,9 +111,9 @@ async function findById(id) {
     values: [id],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  if (results.rowCount === 0) {
+  if (res.rowCount === 0) {
     throw new NotFoundError({
       message: `O id "${userId}" não foi encontrado no sistema.`,
       action: 'Verifique se o "id" está digitado corretamente.',
@@ -123,7 +123,7 @@ async function findById(id) {
     });
   }
 
-  return results.rows[0];
+  return res.rows[0];
 }
 
 async function findByEmail(email) {
@@ -132,9 +132,9 @@ async function findByEmail(email) {
     values: [email],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  if (results.rowCount === 0) {
+  if (res.rowCount === 0) {
     throw new NotFoundError({
       message: `O email informado não foi encontrado no sistema.`,
       action: 'Verifique se o "email" está digitado corretamente.',
@@ -144,7 +144,7 @@ async function findByEmail(email) {
     });
   }
 
-  return results.rows[0];
+  return res.rows[0];
 }
 
 async function findByFullName(full_name) {
@@ -153,9 +153,9 @@ async function findByFullName(full_name) {
     values: [full_name],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  if (results.rowCount === 0) {
+  if (res.rowCount === 0) {
     throw new NotFoundError({
       message: `O usuário informado não foi encontrado no sistema.`,
       action: 'Verifique se o "usuário" está digitado corretamente.',
@@ -165,7 +165,7 @@ async function findByFullName(full_name) {
     });
   }
 
-  return results.rows[0];
+  return res.rows[0];
 }
 
 async function findByFeature(feature) {
@@ -178,9 +178,9 @@ async function findByFeature(feature) {
     values: [feature],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  return results.rows;
+  return res.rows;
 }
 
 async function findByMissingFeature(feature) {
@@ -189,13 +189,19 @@ async function findByMissingFeature(feature) {
     SELECT *
     FROM users
     WHERE NOT ($1 = ANY(features));
-  ;`,
+    `,
     values: [feature],
   };
 
-  const results = await db.query(query);
+  const res = await db.query(query);
 
-  return results.rows;
+  return res.rows;
+}
+
+async function findAll() {
+  const res = await db.query("SELECT * FROM users;");
+
+  return res.rows;
 }
 
 async function removeByEmail(email) {
@@ -242,8 +248,8 @@ async function insertFeatures(id, features) {
         values: [id, feature],
       };
 
-      const results = await db.query(query);
-      lastUpdated = results.rows[0];
+      const res = await db.query(query);
+      lastUpdated = res.rows[0];
     }
   }
 
@@ -264,8 +270,8 @@ async function removeFeatures(id, features) {
         values: [feature, id],
       };
 
-      const results = await db.query(query);
-      lastUpdated = results.rows[0];
+      const res = await db.query(query);
+      lastUpdated = res.rows[0];
     }
   } else {
     const query = {
@@ -277,8 +283,8 @@ async function removeFeatures(id, features) {
       values: [id],
     };
 
-    const results = await db.query(query);
-    lastUpdated = results.rows[0];
+    const res = await db.query(query);
+    lastUpdated = res.rows[0];
   }
 
   return lastUpdated;
@@ -293,6 +299,7 @@ export default {
   findByFullName,
   findByFeature,
   findByMissingFeature,
+  findAll,
   removeByEmail,
   createAnonymous,
   insertFeatures,
