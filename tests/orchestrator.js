@@ -70,10 +70,28 @@ async function runPendingMigrations() {
   await migrator.runPendingMigrations();
 }
 
+const generateRandomCharacters = (count) => {
+  const characters = [];
+
+  for (let i = 0; i < count; i++) {
+    const isUpperCase = Math.random() < 0.5;
+    const asciiOffset = isUpperCase ? 65 : 97;
+    const randomLetter = String.fromCharCode(
+      Math.floor(Math.random() * 26) + asciiOffset,
+    );
+    characters.push(randomLetter);
+  }
+
+  return characters.join("");
+};
+
 async function createUser(userObj) {
+  const randomCharacters = generateRandomCharacters(10);
+  let email = `${randomCharacters}@email.com`;
+
   const info = {
     full_name: userObj?.full_name || "Valid User Full Name",
-    email: userObj?.email || "validuseremail@email.com",
+    email: userObj?.email || email,
     password: userObj?.password || "validuserpassword",
   };
 

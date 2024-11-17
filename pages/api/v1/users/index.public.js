@@ -59,7 +59,7 @@ async function postHandler(req, res) {
 
   const secureOutputValues = authorization.filterOutput(
     newUser,
-    "read:user",
+    "read:user:self",
     newUser,
   );
 

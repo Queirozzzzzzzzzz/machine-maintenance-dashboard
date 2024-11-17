@@ -1,7 +1,6 @@
 const availableFeatures = new Set([
   // USER
   "create:user",
-  "read:user",
   "read:user:self",
   "update:user",
   "active",
@@ -10,11 +9,14 @@ const availableFeatures = new Set([
   "create:session",
   "read:session",
 
-  // MODERATION
-  "admin",
+  // MANAGER
+  "read:user",
   "read:users",
   "update:user:others",
   "deactivate:user",
+
+  // ADMIN
+  "admin",
 
   // UNACTIVE USER
   "unactive",

@@ -1,12 +1,13 @@
 import db from "infra/database";
 import authentication from "models/authentication";
 import { ValidationError } from "errors";
+import { NotFoundError } from "errors";
 
 async function create(data) {
   await validateUniqueEmail(data.email);
   await hashPasswordInObject(data);
 
-  data.features = ["read:session", "read:user"];
+  data.features = ["read:session", "read:user:self"];
 
   const query = {
     text: `INSERT INTO users (full_name, email, password, features, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
