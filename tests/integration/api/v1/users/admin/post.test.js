@@ -28,6 +28,7 @@ describe("POST /api/v1/users/admin", () => {
         "update:user",
         "update:user:others",
         "ban:user",
+        "active",
       ]);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);

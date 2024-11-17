@@ -56,6 +56,7 @@ async function createAdmin(data) {
     "update:user",
     "update:user:others",
     "ban:user",
+    "active",
   ];
 
   const query = {
@@ -193,9 +194,6 @@ async function findByMissingFeature(feature) {
   };
 
   const results = await db.query(query);
-
-  console.log(feature);
-  console.log(results.rows);
 
   return results.rows;
 }
