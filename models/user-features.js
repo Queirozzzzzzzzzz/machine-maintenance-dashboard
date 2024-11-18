@@ -19,6 +19,7 @@ const availableFeatures = new Set([
   "deactivate:user",
   "read:maintenances:all",
   "post:maintenances:manager",
+  "update:maintenances",
 
   // ADMIN
   "admin",

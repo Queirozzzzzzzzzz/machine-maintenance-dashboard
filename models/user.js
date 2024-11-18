@@ -66,6 +66,7 @@ async function createAdmin(data) {
     "read:maintenances:self",
     "read:maintenances:all",
     "post:maintenances:manager",
+    "update:maintenances",
     "ban:user",
     "active",
   ];

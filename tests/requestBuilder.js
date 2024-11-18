@@ -46,6 +46,7 @@ export default class RequestBuilder {
         "read:maintenances:self",
         "read:maintenances:all",
         "post:maintenances:manager",
+        "update:maintenances",
         "ban:user",
         "active",
       ],

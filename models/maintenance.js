@@ -23,23 +23,30 @@ async function create(values) {
 }
 
 async function update(id, values) {
+  const currentMaintenance = await findById(id);
+  const newData = { ...currentMaintenance, ...values };
+
   const query = {
     text: `
         UPDATE maintenances
         SET 
             machine = $2, 
-            criticality = $3, 
-            responsible = $4, 
-            problem = $5
+            role = $3,
+            criticality = $4, 
+            responsible = $5, 
+            problem = $6,
+            expires_at = $7
         WHERE id = $1
         RETURNING *;
     `,
     values: [
       id,
-      values.machine,
-      values.criticality,
-      values.responsible,
-      values.problem,
+      newData.machine,
+      newData.role,
+      newData.criticality,
+      newData.responsible,
+      newData.problem,
+      newData.expires_at,
     ],
   };
 
@@ -47,7 +54,7 @@ async function update(id, values) {
   return res.rows[0];
 }
 
-async function remove(id) {
+async function removeById(id) {
   const query = {
     text: `
         DELETE FROM maintenances
@@ -58,6 +65,7 @@ async function remove(id) {
   };
 
   const res = await db.query(query);
+
   return res.rows[0];
 }
 
@@ -98,7 +106,7 @@ async function findAll() {
 export default {
   create,
   update,
-  remove,
+  removeById,
   findById,
   findByUserId,
   findAll,

@@ -30,6 +30,7 @@ describe("POST /api/v1/users/admin", () => {
         "read:maintenances:self",
         "read:maintenances:all",
         "post:maintenances:manager",
+        "update:maintenances",
         "ban:user",
         "active",
       ]);
