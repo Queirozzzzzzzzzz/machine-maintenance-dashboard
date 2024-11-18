@@ -117,7 +117,13 @@ async function renewObjInDatabase(sessionId) {
 
 async function expireById(id) {
   const query = {
-    text: `UPDATE sessions SET expires_at = created_at - interval '1 day', updated_at = now() WHERE id = $1 RETURNING *;`,
+    text: `
+    UPDATE sessions 
+    SET 
+      expires_at = created_at - interval '1 day', 
+      updated_at = now() at time zone 'utc' 
+    WHERE id = $1 
+    RETURNING *;`,
     values: [id],
   };
 

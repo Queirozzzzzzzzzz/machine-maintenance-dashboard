@@ -12,7 +12,10 @@ beforeAll(async () => {
 describe("POST /api/v1/sessions", () => {
   describe("Anonymous user", () => {
     test("Using a valid email and password", async () => {
-      const defaultUser = await orchestrator.createUser();
+      const defaultUser = await orchestrator.createUser({
+        email: "validuseremail@email.com",
+        password: "validuserpassword",
+      });
       await orchestrator.insertFeaturesToUser(defaultUser.id, [
         "create:session",
       ]);
