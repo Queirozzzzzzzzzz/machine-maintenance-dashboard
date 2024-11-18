@@ -55,5 +55,5 @@ async function patchHandler(req, res) {
     throw err;
   }
 
-  return res.status(201).json(newMaintenance);
+  return res.status(200).json(newMaintenance);
 }

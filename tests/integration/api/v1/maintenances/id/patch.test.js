@@ -9,7 +9,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("DELETE to /api/v1/maintenances/[id]", () => {
+describe("PATCH to /api/v1/maintenances/[id]", () => {
   describe("Anonymous user", () => {
     beforeEach(async () => {
       await orchestrator.dropAllTables();
@@ -20,7 +20,7 @@ describe("DELETE to /api/v1/maintenances/[id]", () => {
       const testMaintenance = await orchestrator.createMaintenance();
       const res = await fetch(
         `${orchestrator.webserverUrl}/api/v1/maintenances/${testMaintenance.id}`,
-        { method: "DELETE" },
+        { method: "PATCH" },
       );
 
       const resBody = await res.json();
@@ -58,7 +58,7 @@ describe("DELETE to /api/v1/maintenances/[id]", () => {
       );
       await reqB.buildUser();
 
-      const { res, resBody } = await reqB.delete();
+      const { res, resBody } = await reqB.patch();
 
       expect(res.status).toEqual(403);
       expect(resBody.status_code).toEqual(403);
@@ -86,20 +86,26 @@ describe("DELETE to /api/v1/maintenances/[id]", () => {
       await orchestrator.runPendingMigrations();
     });
 
-    test("Retrieving information", async () => {
+    test("With valid info", async () => {
       const testMaintenance = await orchestrator.createMaintenance();
       const reqB = new RequestBuilder(
         `/api/v1/maintenances/${testMaintenance.id}`,
       );
       await reqB.buildAdmin();
 
-      const { res, resBody } = await reqB.delete();
+      const { res, resBody } = await reqB.patch({
+        machine: "Máquinaaaa",
+        role: "predictive",
+        criticality: "critical",
+        problem: "Deu ruimm",
+        expires_at: new Date(Date.now() + 1000 * 30),
+      });
 
       expect(res.status).toBe(200);
-      expect(resBody.machine).toEqual("Máquina 1");
-      expect(resBody.role).toBe("preventive");
-      expect(resBody.criticality).toBe("moderate");
-      expect(resBody.problem).toBe("Deu ruim");
+      expect(resBody.machine).toEqual("Máquinaaaa");
+      expect(resBody.role).toBe("predictive");
+      expect(resBody.criticality).toBe("critical");
+      expect(resBody.problem).toBe("Deu ruimm");
       expect(Date.parse(resBody.expires_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
