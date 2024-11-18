@@ -14,7 +14,12 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
-  .get(authorization.canRequest("read:maintenances:all"), getHandler);
+  .get(authorization.canRequest("read:maintenances:all"), getHandler)
+  .post(
+    authorization.canRequest("post:maintenances:manager"),
+    postValidationHandler,
+    postHandler,
+  );
 
 async function getHandler(req, res) {
   let resMaintenances = [];
@@ -25,4 +30,30 @@ async function getHandler(req, res) {
   }
 
   return res.status(200).json(resMaintenances);
+}
+
+async function postValidationHandler(req, res, next) {
+  const cleanValues = validator(req.body, {
+    machine: "required",
+    role: "required",
+    criticality: "required",
+    responsible: "optional",
+    problem: "required",
+    expires_at: "required",
+  });
+
+  req.body = cleanValues;
+
+  next();
+}
+
+async function postHandler(req, res) {
+  let newMaintenance = {};
+  try {
+    newMaintenance = await maintenance.create(req.body);
+  } catch (err) {
+    throw err;
+  }
+
+  return res.status(201).json(newMaintenance);
 }

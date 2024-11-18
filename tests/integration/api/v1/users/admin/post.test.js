@@ -27,6 +27,9 @@ describe("POST /api/v1/users/admin", () => {
         "read:users",
         "update:user",
         "update:user:others",
+        "read:maintenances:self",
+        "read:maintenances:all",
+        "post:maintenances:manager",
         "ban:user",
         "active",
       ]);

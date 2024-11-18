@@ -206,6 +206,72 @@ const schemas = {
         }),
     });
   },
+
+  machine: function () {
+    return Joi.object({
+      machine: Joi.string().max(20).when("$required.machine", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
+
+  role: function () {
+    return Joi.object({
+      role: Joi.string()
+        .valid("corrective", "preventive", "predictive", "pending")
+        .max(10)
+        .when("$required.role", {
+          is: "required",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+    });
+  },
+
+  criticality: function () {
+    return Joi.object({
+      criticality: Joi.string()
+        .valid("light", "moderate", "high", "critical")
+        .max(10)
+        .when("$required.criticality", {
+          is: "required",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+    });
+  },
+
+  responsible: function () {
+    return Joi.object({
+      responsible: Joi.string().guid().when("$required.responsible", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
+
+  problem: function () {
+    return Joi.object({
+      problem: Joi.string().max(256).when("$required.problem", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
+
+  expires_at: function () {
+    return Joi.object({
+      expires_at: Joi.date().iso().when("$required.expires_at", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
 };
 
 function checkCombinedPasswords(combined_passwords, helpers) {
