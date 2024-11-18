@@ -9,11 +9,15 @@ const availableFeatures = new Set([
   "create:session",
   "read:session",
 
+  // MAINTENANCES
+  "read:maintenances:self",
+
   // MANAGER
   "read:user",
   "read:users",
   "update:user:others",
   "deactivate:user",
+  "read:maintenances:all",
 
   // ADMIN
   "admin",

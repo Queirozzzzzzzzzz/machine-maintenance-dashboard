@@ -43,6 +43,8 @@ export default class RequestBuilder {
         "read:users",
         "update:user",
         "update:user:others",
+        "read:maintenances:self",
+        "read:maintenances:all",
         "ban:user",
         "active",
       ],

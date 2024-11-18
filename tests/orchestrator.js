@@ -6,6 +6,7 @@ import migrator from "infra/migrator.js";
 import user from "models/user";
 import session from "models/session";
 import webserver from "infra/webserver";
+import maintenance from "models/maintenance";
 
 if (process.env.NODE_ENV !== "test") {
   throw new Error({
@@ -122,6 +123,19 @@ function parseSetCookies(res) {
   return parsedCookies;
 }
 
+async function createMaintenance(maintenanceObj = {}) {
+  const info = {
+    machine: maintenanceObj.machine || "Máquina 1",
+    role: maintenanceObj.role || "preventive",
+    criticality: maintenanceObj.criticality || "moderate",
+    responsible: maintenanceObj.responsible,
+    problem: maintenanceObj.problem || "Deu ruim",
+    expires_at: maintenanceObj.expires_at || new Date(Date.now() + 1000 * 30),
+  };
+
+  return await maintenance.create(info);
+}
+
 export default {
   webserverUrl,
   waitForAllServices,
@@ -133,4 +147,5 @@ export default {
   findSessionByToken,
   insertFeaturesToUser,
   removeFeaturesFromUser,
+  createMaintenance,
 };

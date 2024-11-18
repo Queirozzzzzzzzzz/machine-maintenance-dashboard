@@ -31,13 +31,14 @@ exports.up = (pgm) => {
     role: {
       type: "varchar(10)",
       notNull: true,
-      check: "role IN ('open', 'programmed', 'finished', 'pending')",
+      check: "role IN ('corrective', 'preventive', 'predictive', 'pending')",
     },
 
     progress: {
       type: "varchar(10)",
       notNull: true,
       check: "progress IN ('ongoing', 'concluded', 'aborted')",
+      default: "ongoing",
     },
 
     created_at: {

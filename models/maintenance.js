@@ -1,15 +1,19 @@
+import db from "infra/database";
+
 async function create(values) {
   const query = {
     text: `
-        INSERT INTO maintenances (machine, criticality, responsible, problem)
-        VALUES ($1, $2, $3, $4)
+        INSERT INTO maintenances (machine, role, criticality, responsible, problem, expires_at)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
         `,
     values: [
       values.machine,
+      values.role,
       values.criticality,
       values.responsible,
       values.problem,
+      values.expires_at,
     ],
   };
 
@@ -86,6 +90,7 @@ async function findByUserId(userId) {
 
 async function findAll() {
   const res = await db.query("SELECT * FROM maintenances;");
+
   return res.rows;
 }
 
