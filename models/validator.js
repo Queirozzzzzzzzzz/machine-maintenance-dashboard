@@ -193,6 +193,19 @@ const schemas = {
         }),
     });
   },
+
+  role: function () {
+    return Joi.object({
+      role: Joi.string()
+        .valid("technical", "manager")
+        .min(0)
+        .when("$required.role", {
+          is: "required",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+    });
+  },
 };
 
 function checkCombinedPasswords(combined_passwords, helpers) {

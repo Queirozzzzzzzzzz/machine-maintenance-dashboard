@@ -127,6 +127,33 @@ export default class RequestBuilder {
     return { res, resBody };
   }
 
+  async patch(routeOrRequestBody, inputRequestBody) {
+    const { route, reqBody } = this.getRouteAndRequestBody(
+      routeOrRequestBody,
+      inputRequestBody,
+    );
+
+    if (!this.headers) {
+      this.buildHeaders();
+    }
+
+    const fetchData = {
+      method: "PATCH",
+      headers: this.headers,
+    };
+
+    if (reqBody) {
+      fetchData.body =
+        typeof reqBody === "object" ? JSON.stringify(reqBody) : reqBody;
+    }
+
+    const res = await fetch(`${this.baseUrl}${route}`, fetchData);
+
+    const resBody = await res.json();
+
+    return { res, resBody };
+  }
+
   buildHeaders(customHeaders) {
     const headers = {
       "Content-Type": "application/json",

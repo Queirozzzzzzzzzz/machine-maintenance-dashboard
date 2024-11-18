@@ -26,17 +26,24 @@ async function create(data) {
   return newUser;
 }
 
-async function update(id, data) {
+async function update(email, data) {
+  const currentUser = await findByEmail(email);
   if (data.password) await hashPasswordInObject(data);
-  const newData = [...user, ...data];
+  const newData = { ...currentUser, ...data };
 
   const query = {
     text: `
     UPDATE users
-    SET full_name = $2, email = $3, password = $4, updated_at = (now() at time zone 'utc')
-    WHERE id = $1
+    SET full_name = $2, email = $3, password = $4, role = $5, updated_at = (now() at time zone 'utc')
+    WHERE email = $1
     RETURNING *;`,
-    values: [id, newData.full_name, newData.email, newData.password],
+    values: [
+      email,
+      newData.full_name,
+      newData.email,
+      newData.password,
+      newData.role,
+    ],
   };
 
   const result = await db.query(query);

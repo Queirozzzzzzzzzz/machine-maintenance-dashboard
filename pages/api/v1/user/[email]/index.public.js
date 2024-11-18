@@ -15,7 +15,12 @@ export default nextConnect({
   .use(authentication.injectUser)
   .use(controller.logRequest)
   .get(getValidationHandler, authorization.canRequest("read:user"), getHandler)
-  .delete(authorization.canRequest("update:user:others"), deleteHandler);
+  .delete(authorization.canRequest("update:user:others"), deleteHandler)
+  .patch(
+    authorization.canRequest("update:user:others"),
+    patchValidationHandler,
+    patchHandler,
+  );
 
 async function getValidationHandler(req, res, next) {
   const cleanQueryValues = validator(req.query, {
@@ -34,7 +39,6 @@ async function getHandler(req, res) {
   } catch (err) {
     throw err;
   }
-  console.log(resUser);
 
   return res.status(200).json(resUser);
 }
@@ -48,4 +52,34 @@ async function deleteHandler(req, res) {
   }
 
   return res.status(200).json(deletedUser);
+}
+
+async function patchValidationHandler(req, res, next) {
+  const cleanQueryValues = validator(req.query, {
+    email: "required",
+  });
+
+  req.query = cleanQueryValues;
+
+  const cleanBodyValues = validator(req.body, {
+    full_name: "optional",
+    email: "optional",
+    password: "optional",
+    role: "optional",
+  });
+
+  req.body = cleanBodyValues;
+
+  next();
+}
+
+async function patchHandler(req, res) {
+  let newUser;
+  try {
+    newUser = await user.update(req.query.email, req.body);
+  } catch (err) {
+    throw err;
+  }
+
+  return res.status(200).json(newUser);
 }
