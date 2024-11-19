@@ -34,12 +34,13 @@ async function deleteHandler(req, res) {
 
 async function patchValidationHandler(req, res, next) {
   const cleanValues = validator(req.body, {
-    machine: "required",
-    role: "required",
-    criticality: "required",
+    machine: "optional",
+    role: "optional",
+    criticality: "optional",
     responsible: "optional",
-    problem: "required",
-    expires_at: "required",
+    problem: "optional",
+    expires_at: "optional",
+    price: "optional",
   });
 
   req.body = cleanValues;

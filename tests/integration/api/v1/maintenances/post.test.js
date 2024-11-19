@@ -91,6 +91,7 @@ describe("POST to /api/v1/maintenances", () => {
         role: "preventive",
         criticality: "moderate",
         problem: "Deu ruim",
+        price: "1924.8",
         expires_at: new Date(Date.now() + 1000 * 30),
       });
 
@@ -99,6 +100,7 @@ describe("POST to /api/v1/maintenances", () => {
       expect(resBody.role).toBe("preventive");
       expect(resBody.criticality).toBe("moderate");
       expect(resBody.problem).toBe("Deu ruim");
+      expect(resBody.price).toBe(1924.8);
       expect(Date.parse(resBody.expires_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);

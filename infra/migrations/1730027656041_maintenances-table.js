@@ -41,6 +41,10 @@ exports.up = (pgm) => {
       default: "ongoing",
     },
 
+    price: {
+      type: "float",
+    },
+
     created_at: {
       type: "timestamp with time zone",
       notNull: true,

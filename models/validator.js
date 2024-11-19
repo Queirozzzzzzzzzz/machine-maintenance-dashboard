@@ -272,6 +272,16 @@ const schemas = {
       }),
     });
   },
+
+  price: function () {
+    return Joi.object({
+      price: Joi.number().when("$required.price", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
 };
 
 function checkCombinedPasswords(combined_passwords, helpers) {

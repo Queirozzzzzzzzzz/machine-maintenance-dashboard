@@ -40,6 +40,7 @@ async function postValidationHandler(req, res, next) {
     responsible: "optional",
     problem: "required",
     expires_at: "required",
+    price: "optional",
   });
 
   req.body = cleanValues;

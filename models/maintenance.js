@@ -3,8 +3,8 @@ import db from "infra/database";
 async function create(values) {
   const query = {
     text: `
-        INSERT INTO maintenances (machine, role, criticality, responsible, problem, expires_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO maintenances (machine, role, criticality, responsible, problem, price, expires_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *;
         `,
     values: [
@@ -13,6 +13,7 @@ async function create(values) {
       values.criticality,
       values.responsible,
       values.problem,
+      values.price,
       values.expires_at,
     ],
   };
@@ -35,7 +36,8 @@ async function update(id, values) {
             criticality = $4, 
             responsible = $5, 
             problem = $6,
-            expires_at = $7
+            price = $7,
+            expires_at = $8
         WHERE id = $1
         RETURNING *;
     `,
@@ -46,6 +48,7 @@ async function update(id, values) {
       newData.criticality,
       newData.responsible,
       newData.problem,
+      newData.price,
       newData.expires_at,
     ],
   };

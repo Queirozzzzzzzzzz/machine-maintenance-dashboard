@@ -98,6 +98,7 @@ describe("PATCH to /api/v1/maintenances/[id]", () => {
         role: "predictive",
         criticality: "critical",
         problem: "Deu ruimm",
+        price: 1924.8,
         expires_at: new Date(Date.now() + 1000 * 30),
       });
 
@@ -106,6 +107,7 @@ describe("PATCH to /api/v1/maintenances/[id]", () => {
       expect(resBody.role).toBe("predictive");
       expect(resBody.criticality).toBe("critical");
       expect(resBody.problem).toBe("Deu ruimm");
+      expect(resBody.price).toBe(1924.8);
       expect(Date.parse(resBody.expires_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
