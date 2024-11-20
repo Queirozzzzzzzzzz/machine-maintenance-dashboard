@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 import { useUser } from "pages/interface";
 
-export default function Home() {
+export default function MaintenancesPending() {
   const router = useRouter();
   const { user, isLoadingUser } = useUser();
 
@@ -11,17 +11,14 @@ export default function Home() {
     if (router && !user && !isLoadingUser) router.push(`/login`);
 
     if (router && user) {
-      if (user.features.includes("admin")) {
-        router.push("/manager/dashboard");
-      } else {
-        router.push("/maintenances");
-      }
+      if (!user.features.includes("admin")) router.push("/login");
+      else if (true) console.log(true);
     }
   }, [user, router, isLoadingUser]);
 
   return (
     <>
-      <h1>Carregando...</h1>
+      <h1>Manutenções Solicitadas</h1>
     </>
   );
 }

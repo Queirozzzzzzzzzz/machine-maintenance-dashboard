@@ -33,9 +33,9 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (!user && !isLoadingUser) router.push("/login");
+    if (router && !user && !isLoadingUser) router.push("/login");
 
-    if (user) {
+    if (router && user) {
       if (!user.features.includes("admin")) router.push("/login");
       else if (signups.length <= 0) fetchSignups();
     }
@@ -43,18 +43,10 @@ export default function Home() {
 
   const acceptSignup = async (email) => {
     try {
-      let res = await fetch(`/api/v1/user/${email}/features`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ features: ["active"] }),
-      });
-
-      if (!res.ok) throw new Error();
-
-      res = await fetch(`/api/v1/user/${email}/features`, {
+      const res = await fetch(`/api/v1/user/${email}/features`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ features: ["create:session"] }),
+        body: JSON.stringify({ features: ["create:session", "active"] }),
       });
 
       if (!res.ok) throw new Error();

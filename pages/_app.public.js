@@ -12,10 +12,13 @@ export default function MyApp({ Component, pageProps }) {
     <UserProvider>
       <Layout>
         <Toaster />
-        {router.pathname !== "/login" && router.pathname !== "/signup" && (
-          <Header></Header>
+        {router.pathname !== "/login" && router.pathname !== "/signup" ? (
+          <Header>
+            <Component {...pageProps} />
+          </Header>
+        ) : (
+          <Component {...pageProps} />
         )}
-        <Component {...pageProps} />
       </Layout>
     </UserProvider>
   );
