@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-export default function UsersSelectInput({ register, full_name, label }) {
+export default function UsersSelectInput({ register, label }) {
   const [users, setUsers] = React.useState([]);
   const [selectedUserId, setSelectedUserId] = React.useState(undefined);
 
