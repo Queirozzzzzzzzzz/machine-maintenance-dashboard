@@ -27,7 +27,7 @@ export default nextConnect({
 
 async function patchValidationHandler(req, res, next) {
   const cleanQueryValues = validator(req.query, {
-    email: "required",
+    id: "required",
   });
 
   req.query = cleanQueryValues;
@@ -42,10 +42,9 @@ async function patchValidationHandler(req, res, next) {
 }
 
 async function patchHandler(req, res) {
-  const targetUser = await user.findByEmail(req.query.email);
   let updatedUser;
   try {
-    updatedUser = await user.insertFeatures(targetUser.id, req.body.features);
+    updatedUser = await user.insertFeatures(req.query.id, req.body.features);
   } catch (err) {
     throw err;
   }
@@ -70,11 +69,9 @@ async function deleteValidationHandler(req, res, next) {
 }
 
 async function deleteHandler(req, res) {
-  const targetUser = await user.findByEmail(req.query.email);
-
   let updatedUser;
   try {
-    updatedUser = await user.removeFeatures(targetUser.id, req.body.features);
+    updatedUser = await user.removeFeatures(req.query.id, req.body.features);
   } catch (err) {
     throw err;
   }

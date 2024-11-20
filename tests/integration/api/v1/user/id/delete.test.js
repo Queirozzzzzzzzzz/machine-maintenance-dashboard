@@ -9,7 +9,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("DELETE /api/v1/user/[email]", () => {
+describe("DELETE /api/v1/user/[id]", () => {
   describe("Anonymous user", () => {
     beforeEach(async () => {
       await orchestrator.dropAllTables();
@@ -18,8 +18,8 @@ describe("DELETE /api/v1/user/[email]", () => {
 
     test("Retrieving the endpoint", async () => {
       const res = await fetch(
-        `${orchestrator.webserverUrl}/api/v1/user/emaiL@email.com`,
-        { method: "PATCH" },
+        `${orchestrator.webserverUrl}/api/v1/user/d308aa64-4cf9-4c62-8b20-419157f8a2d5`,
+        { method: "DELETE" },
       );
 
       const resBody = await res.json();
@@ -51,13 +51,11 @@ describe("DELETE /api/v1/user/[email]", () => {
     });
 
     test("Retrieving information", async () => {
-      const defaultUser = await orchestrator.createUser({
-        email: "email@email.com",
-      });
-      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.email}`);
+      const defaultUser = await orchestrator.createUser();
+      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.id}`);
       await reqB.buildUser();
 
-      const { res, resBody } = await reqB.patch();
+      const { res, resBody } = await reqB.delete();
 
       expect(res.status).toEqual(403);
       expect(resBody.status_code).toEqual(403);
@@ -85,46 +83,17 @@ describe("DELETE /api/v1/user/[email]", () => {
       await orchestrator.runPendingMigrations();
     });
 
-    test("Without body", async () => {
-      const defaultUser = await orchestrator.createUser({
-        email: "email@email.com",
-      });
-      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.email}`);
+    test("Retrieving information", async () => {
+      const defaultUser = await orchestrator.createUser();
+      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.id}`);
       await reqB.buildAdmin();
 
-      const { res, resBody } = await reqB.patch();
-
-      expect(res.status).toEqual(400);
-      expect(resBody.status_code).toEqual(400);
-      expect(resBody.name).toEqual("ValidationError");
-      expect(resBody.message).toEqual(
-        "Objeto enviado deve ter no mínimo uma chave.",
-      );
-      expect(resBody.action).toEqual(
-        `Ajuste os dados enviados e tente novamente.`,
-      );
-      expect(uuidVersion(resBody.error_id)).toEqual(4);
-      expect(uuidVersion(resBody.request_id)).toEqual(4);
-      expect(resBody.error_location_code).toEqual(
-        "MODEL:VALIDATOR:FINAL_SCHEMA",
-      );
-    });
-
-    test("New email", async () => {
-      const defaultUser = await orchestrator.createUser({
-        email: "email@email.com",
-      });
-      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.email}`);
-      await reqB.buildAdmin();
-
-      const newEmail = "newemail@email.com";
-
-      const { res, resBody } = await reqB.patch({ email: newEmail });
+      const { res, resBody } = await reqB.delete();
 
       expect(res.status).toBe(200);
       expect(resBody.id).toEqual(defaultUser.id);
       expect(resBody.full_name).toEqual(defaultUser.full_name);
-      expect(resBody.email).toEqual(newEmail);
+      expect(resBody.email).toEqual(defaultUser.email);
       expect(resBody.features).toEqual(defaultUser.features);
       expect(new Date(resBody.created_at)).toEqual(
         new Date(defaultUser.created_at),

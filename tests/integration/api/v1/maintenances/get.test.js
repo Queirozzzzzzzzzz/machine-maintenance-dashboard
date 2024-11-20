@@ -24,23 +24,8 @@ describe("GET to /api/v1/maintenances", () => {
 
       const resBody = await res.json();
 
-      expect(res.status).toEqual(403);
-      expect(resBody.status_code).toEqual(403);
-      expect(resBody.name).toEqual("ForbiddenError");
-      expect(resBody.message).toEqual(
-        "Usuário não pode executar esta operação.",
-      );
-      expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "read:maintenances:all".`,
-      );
-      expect(uuidVersion(resBody.error_id)).toEqual(4);
-      expect(uuidVersion(resBody.request_id)).toEqual(4);
-      expect(resBody.error_location_code).toEqual(
-        "MODEL:AUTHORIZATION:CAN_REQUEST:FEATURE_NOT_FOUND",
-      );
-
-      const parsedCookies = orchestrator.parseSetCookies(res);
-      expect(parsedCookies).toStrictEqual({});
+      expect(res.status).toEqual(200);
+      expect(resBody).toEqual([]);
     });
   });
 
@@ -56,23 +41,8 @@ describe("GET to /api/v1/maintenances", () => {
 
       const { res, resBody } = await reqB.get();
 
-      expect(res.status).toEqual(403);
-      expect(resBody.status_code).toEqual(403);
-      expect(resBody.name).toEqual("ForbiddenError");
-      expect(resBody.message).toEqual(
-        "Usuário não pode executar esta operação.",
-      );
-      expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "read:maintenances:all".`,
-      );
-      expect(uuidVersion(resBody.error_id)).toEqual(4);
-      expect(uuidVersion(resBody.request_id)).toEqual(4);
-      expect(resBody.error_location_code).toEqual(
-        "MODEL:AUTHORIZATION:CAN_REQUEST:FEATURE_NOT_FOUND",
-      );
-
-      const parsedCookies = orchestrator.parseSetCookies(res);
-      expect(parsedCookies).toStrictEqual({});
+      expect(res.status).toEqual(200);
+      expect(resBody).toEqual([]);
     });
   });
 

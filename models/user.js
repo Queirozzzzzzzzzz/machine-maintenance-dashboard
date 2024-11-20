@@ -26,8 +26,8 @@ async function create(data) {
   return newUser;
 }
 
-async function update(email, data) {
-  const currentUser = await findByEmail(email);
+async function update(id, data) {
+  const currentUser = await findById(id);
   if (data.password) await hashPasswordInObject(data);
   const newData = { ...currentUser, ...data };
 
@@ -35,10 +35,10 @@ async function update(email, data) {
     text: `
     UPDATE users
     SET full_name = $2, email = $3, password = $4, role = $5, updated_at = (now() at time zone 'utc')
-    WHERE email = $1
+    WHERE id = $1
     RETURNING *;`,
     values: [
-      email,
+      id,
       newData.full_name,
       newData.email,
       newData.password,
@@ -216,6 +216,30 @@ async function findAll() {
   return res.rows;
 }
 
+async function removeById(id) {
+  const query = {
+    text: `
+    DELETE FROM users
+    WHERE id = $1
+    RETURNING *;`,
+    values: [id],
+  };
+
+  const res = await db.query(query);
+
+  if (res.rowCount === 0) {
+    throw new NotFoundError({
+      message: `O id informado não foi encontrado no sistema.`,
+      action: 'Verifique se o "id" está digitado corretamente.',
+      stack: new Error().stack,
+      errorLocationCode: "MODEL:USER:REMOVE_BY_ID:NOT_FOUND",
+      key: "id",
+    });
+  }
+
+  return res.rows[0];
+}
+
 async function removeByEmail(email) {
   const query = {
     text: `
@@ -312,6 +336,7 @@ export default {
   findByFeature,
   findByMissingFeature,
   findAll,
+  removeById,
   removeByEmail,
   createAnonymous,
   insertFeatures,

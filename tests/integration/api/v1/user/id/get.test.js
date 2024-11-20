@@ -9,7 +9,7 @@ beforeAll(async () => {
   await orchestrator.runPendingMigrations();
 });
 
-describe("DELETE /api/v1/user/[email]", () => {
+describe("GET /api/v1/user/[id]", () => {
   describe("Anonymous user", () => {
     beforeEach(async () => {
       await orchestrator.dropAllTables();
@@ -18,8 +18,7 @@ describe("DELETE /api/v1/user/[email]", () => {
 
     test("Retrieving the endpoint", async () => {
       const res = await fetch(
-        `${orchestrator.webserverUrl}/api/v1/user/emaiL@email.com`,
-        { method: "DELETE" },
+        `${orchestrator.webserverUrl}/api/v1/user/d308aa64-4cf9-4c62-8b20-419157f8a2d5`,
       );
 
       const resBody = await res.json();
@@ -31,12 +30,12 @@ describe("DELETE /api/v1/user/[email]", () => {
         "Usuário não pode executar esta operação.",
       );
       expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "update:user:others".`,
+        `Verifique se este usuário possui a feature "read:user".`,
       );
       expect(uuidVersion(resBody.error_id)).toEqual(4);
       expect(uuidVersion(resBody.request_id)).toEqual(4);
       expect(resBody.error_location_code).toEqual(
-        "MODEL:AUTHORIZATION:CAN_REQUEST:FEATURE_NOT_FOUND",
+        "API:USER:GET_USER_BY_ID:USER_CANT_READ_USER",
       );
 
       const parsedCookies = orchestrator.parseSetCookies(res);
@@ -50,14 +49,16 @@ describe("DELETE /api/v1/user/[email]", () => {
       await orchestrator.runPendingMigrations();
     });
 
-    test("Retrieving information", async () => {
+    test("With other user id", async () => {
       const defaultUser = await orchestrator.createUser({
         email: "email@email.com",
       });
-      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.email}`);
+      const reqB = new RequestBuilder(
+        `/api/v1/user/d308aa64-4cf9-4c62-8b20-419157f8a2d5`,
+      );
       await reqB.buildUser();
 
-      const { res, resBody } = await reqB.delete();
+      const { res, resBody } = await reqB.get();
 
       expect(res.status).toEqual(403);
       expect(resBody.status_code).toEqual(403);
@@ -66,12 +67,12 @@ describe("DELETE /api/v1/user/[email]", () => {
         "Usuário não pode executar esta operação.",
       );
       expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "update:user:others".`,
+        `Verifique se este usuário possui a feature "read:user".`,
       );
       expect(uuidVersion(resBody.error_id)).toEqual(4);
       expect(uuidVersion(resBody.request_id)).toEqual(4);
       expect(resBody.error_location_code).toEqual(
-        "MODEL:AUTHORIZATION:CAN_REQUEST:FEATURE_NOT_FOUND",
+        "API:USER:GET_USER_BY_ID:USER_CANT_READ_USER",
       );
 
       const parsedCookies = orchestrator.parseSetCookies(res);
@@ -89,10 +90,10 @@ describe("DELETE /api/v1/user/[email]", () => {
       const defaultUser = await orchestrator.createUser({
         email: "email@email.com",
       });
-      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.email}`);
+      const reqB = new RequestBuilder(`/api/v1/user/${defaultUser.id}`);
       await reqB.buildAdmin();
 
-      const { res, resBody } = await reqB.delete();
+      const { res, resBody } = await reqB.get();
 
       expect(res.status).toBe(200);
       expect(resBody.id).toEqual(defaultUser.id);

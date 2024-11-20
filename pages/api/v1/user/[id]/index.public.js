@@ -5,6 +5,7 @@ import authorization from "models/authorization.js";
 import controller from "models/controller.js";
 import user from "models/user.js";
 import validator from "models/validator";
+import { ForbiddenError } from "errors";
 
 export default nextConnect({
   attachParams: true,
@@ -14,7 +15,7 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
-  .get(getValidationHandler, authorization.canRequest("read:user"), getHandler)
+  .get(getValidationHandler, getHandler)
   .delete(authorization.canRequest("update:user:others"), deleteHandler)
   .patch(
     authorization.canRequest("update:user:others"),
@@ -24,7 +25,7 @@ export default nextConnect({
 
 async function getValidationHandler(req, res, next) {
   const cleanQueryValues = validator(req.query, {
-    email: "required",
+    id: "required",
   });
 
   req.query = cleanQueryValues;
@@ -33,9 +34,20 @@ async function getValidationHandler(req, res, next) {
 }
 
 async function getHandler(req, res) {
+  const reqUser = req.context.user;
+  const targetUserId = req.query.id;
+
+  if (reqUser.id != targetUserId && !reqUser.features.includes("read:user")) {
+    throw new ForbiddenError({
+      message: `Usuário não pode executar esta operação.`,
+      action: `Verifique se este usuário possui a feature "read:user".`,
+      errorLocationCode: "API:USER:GET_USER_BY_ID:USER_CANT_READ_USER",
+    });
+  }
+
   let resUser;
   try {
-    resUser = await user.findByEmail(req.query.email);
+    resUser = await user.findById(req.query.id);
   } catch (err) {
     throw err;
   }
@@ -46,7 +58,7 @@ async function getHandler(req, res) {
 async function deleteHandler(req, res) {
   let deletedUser;
   try {
-    deletedUser = await user.removeByEmail(req.query.email);
+    deletedUser = await user.removeById(req.query.id);
   } catch (err) {
     throw err;
   }
@@ -56,7 +68,7 @@ async function deleteHandler(req, res) {
 
 async function patchValidationHandler(req, res, next) {
   const cleanQueryValues = validator(req.query, {
-    email: "required",
+    id: "required",
   });
 
   req.query = cleanQueryValues;
@@ -76,7 +88,7 @@ async function patchValidationHandler(req, res, next) {
 async function patchHandler(req, res) {
   let newUser;
   try {
-    newUser = await user.update(req.query.email, req.body);
+    newUser = await user.update(req.query.id, req.body);
   } catch (err) {
     throw err;
   }

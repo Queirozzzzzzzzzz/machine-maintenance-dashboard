@@ -285,6 +285,16 @@ const schemas = {
       }),
     });
   },
+
+  id: function () {
+    return Joi.object({
+      id: Joi.string().guid().allow(null).when("$required.id", {
+        is: "required",
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+    });
+  },
 };
 
 function checkCombinedPasswords(combined_passwords, helpers) {

@@ -18,6 +18,26 @@ export default function Maintenances() {
     }
   }, [user, router, isLoadingUser]);
 
+  async function mergeResponsibleUsers(rawMaintenances, responsibleUsers) {
+    const validResponsibleUsers = responsibleUsers.filter(
+      (user) => user !== null,
+    );
+
+    return rawMaintenances.map((maintenance) => {
+      if (maintenance.responsible === null) {
+        return maintenance; // Return as is if responsible is null
+      }
+
+      const matchingUser = validResponsibleUsers.find(
+        (user) => user.id === maintenance.responsible,
+      );
+      return {
+        ...maintenance,
+        responsible_name: matchingUser ? matchingUser.responsible_name : null,
+      };
+    });
+  }
+
   const fetchMaintenances = async () => {
     try {
       setIsLoadingMaintenances(true);
@@ -26,7 +46,13 @@ export default function Maintenances() {
         throw new Error("Ocorreu um erro ao carregar as manutenções");
 
       const resBody = await res.json();
-      setMaintenances(resBody);
+      const responsibleUsers = await fetchResponsibleUsers(resBody);
+      const updatedMaintenances = await mergeResponsibleUsers(
+        resBody,
+        responsibleUsers,
+      );
+
+      setMaintenances(updatedMaintenances);
     } catch (err) {
       console.error("Error fetching maintenances:", err);
       toast.error(
@@ -39,6 +65,25 @@ export default function Maintenances() {
     } finally {
       setIsLoadingMaintenances(false);
     }
+  };
+
+  const fetchResponsibleUsers = async (maintenances) => {
+    const responsibles = [...new Set(maintenances.map((m) => m.responsible))];
+
+    const promises = responsibles.map(async (r) => {
+      try {
+        if (r == null) return null;
+
+        const res = await fetch(`/api/v1/user/${r}`);
+        const resBody = await res.json();
+        return { id: r, responsible_name: resBody.full_name };
+      } catch (error) {
+        console.error(`Error fetching user ${r}:`, error);
+        return null;
+      }
+    });
+
+    return Promise.all(promises);
   };
 
   const editMaintenance = async (id) => {
@@ -66,6 +111,37 @@ export default function Maintenances() {
     }
   };
 
+  const criticalityTranslations = {
+    light: "Leve",
+    moderate: "Moderado",
+    high: "Alto",
+    critical: "Crítico",
+  };
+
+  const renderMaintenance = (maintenance) => (
+    <div key={maintenance.id}>
+      <h3>{maintenance.machine}</h3>
+      <p>
+        <strong>Prazo:</strong>{" "}
+        {new Date(maintenance.expires_at).toLocaleDateString()}
+      </p>
+
+      <p>
+        <strong>Estado:</strong>{" "}
+        {criticalityTranslations[maintenance.criticality] ||
+          maintenance.criticality}
+      </p>
+
+      {maintenance.responsible && (
+        <p>
+          <strong>Responsável:</strong> {maintenance.responsible_name}
+        </p>
+      )}
+      <button onClick={() => editMaintenance(maintenance.id)}>Editar</button>
+      <button onClick={() => deleteMaintenance(maintenance.id)}>Excluir</button>
+    </div>
+  );
+
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
   }
@@ -74,21 +150,7 @@ export default function Maintenances() {
     <>
       <h1>Manutenções</h1>
       {maintenances.length > 0 ? (
-        maintenances.map((maintenance) => (
-          <div key={maintenance.id}>
-            <h3>{maintenance.machine}</h3>
-            <p>
-              <strong>Data:</strong> <p>{maintenance.responsible}</p>
-              {new Date(maintenance.expires_at).toLocaleDateString()}
-            </p>
-            <button onClick={() => editMaintenance(maintenance.id)}>
-              Editar
-            </button>
-            <button onClick={() => deleteMaintenance(maintenance.id)}>
-              Excluir
-            </button>
-          </div>
-        ))
+        maintenances.map(renderMaintenance)
       ) : (
         <p>Não há manutenções para exibir.</p>
       )}
