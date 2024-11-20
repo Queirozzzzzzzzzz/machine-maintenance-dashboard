@@ -25,7 +25,6 @@ exports.up = (pgm) => {
 
     problem: {
       type: "varchar(256)",
-      notNull: true,
     },
 
     role: {

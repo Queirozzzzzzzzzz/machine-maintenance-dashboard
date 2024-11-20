@@ -38,7 +38,7 @@ async function postValidationHandler(req, res, next) {
     role: "required",
     criticality: "required",
     responsible: "optional",
-    problem: "required",
+    problem: "optional",
     expires_at: "required",
     price: "optional",
   });

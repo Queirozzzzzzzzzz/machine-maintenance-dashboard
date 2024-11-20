@@ -245,17 +245,20 @@ const schemas = {
 
   responsible: function () {
     return Joi.object({
-      responsible: Joi.string().guid().when("$required.responsible", {
-        is: "required",
-        then: Joi.required(),
-        otherwise: Joi.optional(),
-      }),
+      responsible: Joi.string()
+        .guid()
+        .allow(null)
+        .when("$required.responsible", {
+          is: "required",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
     });
   },
 
   problem: function () {
     return Joi.object({
-      problem: Joi.string().max(256).when("$required.problem", {
+      problem: Joi.string().max(256).allow(null).when("$required.problem", {
         is: "required",
         then: Joi.required(),
         otherwise: Joi.optional(),
@@ -275,7 +278,7 @@ const schemas = {
 
   price: function () {
     return Joi.object({
-      price: Joi.number().when("$required.price", {
+      price: Joi.number().allow(null).when("$required.price", {
         is: "required",
         then: Joi.required(),
         otherwise: Joi.optional(),
