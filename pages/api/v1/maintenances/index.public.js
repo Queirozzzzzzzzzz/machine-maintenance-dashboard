@@ -14,7 +14,7 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
-  .get(authorization.canRequest("read:maintenances:all"), getHandler)
+  .get(getHandler)
   .post(
     authorization.canRequest("post:maintenances:manager"),
     postValidationHandler,
@@ -22,9 +22,15 @@ export default nextConnect({
   );
 
 async function getHandler(req, res) {
+  const reqUser = req.context.user;
+
   let resMaintenances = [];
   try {
-    resMaintenances = await maintenance.findAll();
+    if (!reqUser.features.includes("admin")) {
+      resMaintenances = await maintenance.findByUserId(reqUser.id);
+    } else {
+      resMaintenances = await maintenance.findAll();
+    }
   } catch (err) {
     throw err;
   }

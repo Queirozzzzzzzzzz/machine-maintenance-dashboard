@@ -46,10 +46,16 @@ export default function MaintenancesNew() {
       });
 
       if (res.status == 201) {
-        toast.success("Manutenção criada com sucesso.");
+        toast.success("Manutenção criada com sucesso.", {
+          className: "alert success",
+          duration: 2000,
+        });
       } else {
         const resBody = await res.json();
-        toast.error(resBody.message);
+        toast.error(resBody.message, {
+          className: "alert error",
+          duration: 2000,
+        });
       }
     } catch (error) {
       toast.error("Houve uma falha ao criar a manutenção.");

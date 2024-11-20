@@ -57,7 +57,7 @@ export default function Home() {
 
       toast.success("Usuário aceito com sucesso!", {
         className: "alert success",
-        duration: 1000,
+        duration: 2000,
       });
     } catch (err) {
       toast.error(err.message || "Ocorreu um erro ao aceitar o cadastro!", {
@@ -85,7 +85,7 @@ export default function Home() {
 
     toast.success("Usuário negado com sucesso!", {
       className: "alert success",
-      duration: 1000,
+      duration: 2000,
     });
   };
 

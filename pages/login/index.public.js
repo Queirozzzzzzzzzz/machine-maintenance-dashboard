@@ -37,7 +37,7 @@ export default function signup() {
     if (res.status === 201) {
       toast.success("Logado com sucesso!", {
         className: "alert success",
-        duration: 1000,
+        duration: 2000,
       });
       fetchUser();
       return;

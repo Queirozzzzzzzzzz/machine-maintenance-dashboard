@@ -41,7 +41,7 @@ export default function signup() {
     if (res.status === 201) {
       toast.success("Cadastro realizado com sucesso!", {
         className: "alert success",
-        duration: 1000,
+        duration: 2000,
       });
       router.push("/login");
       return;
