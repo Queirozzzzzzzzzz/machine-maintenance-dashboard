@@ -132,20 +132,18 @@ export default function Header({ children }) {
               </>
             )}
 
+            <li
+              className="sidebar-list-item"
+              onClick={() => loadPage("/maintenances")}
+            >
+              <a>
+                <span className="material-icons-outlined">build_circle</span>{" "}
+                Manutenções
+              </a>
+            </li>
+
             {!userIsAdmin && (
               <>
-                <li
-                  className="sidebar-list-item"
-                  onClick={() => loadPage("/maintenances")}
-                >
-                  <a>
-                    <span className="material-icons-outlined">
-                      build_circle
-                    </span>{" "}
-                    Manutenções
-                  </a>
-                </li>
-
                 <li
                   className="sidebar-list-item"
                   onClick={() => loadPage("/maintenances/request")}
