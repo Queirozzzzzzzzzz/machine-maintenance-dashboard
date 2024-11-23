@@ -16,7 +16,7 @@ export default function MaintenancesNew() {
     }
   }, [user, router, isLoadingUser]);
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
       machine: null,
       responsible: null,
@@ -27,6 +27,12 @@ export default function MaintenancesNew() {
       price: null,
     },
   });
+
+  useEffect(() => {
+    if (formState.isSubmitSuccessful) {
+      reset();
+    }
+  }, [formState, reset]);
 
   const onSubmit = async (data) => {
     try {
@@ -50,6 +56,8 @@ export default function MaintenancesNew() {
           className: "alert success",
           duration: 2000,
         });
+
+        reset();
       } else {
         const resBody = await res.json();
         toast.error(resBody.message, {
