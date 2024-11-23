@@ -41,9 +41,9 @@ export default function Home() {
     }
   }, [user, router, isLoadingUser]);
 
-  const acceptSignup = async (email) => {
+  const acceptSignup = async (id) => {
     try {
-      const res = await fetch(`/api/v1/user/${email}/features`, {
+      const res = await fetch(`/api/v1/user/${id}/features`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ features: ["create:session", "active"] }),
@@ -52,7 +52,7 @@ export default function Home() {
       if (!res.ok) throw new Error();
 
       setSignups((prevSignups) =>
-        prevSignups.filter((signup) => signup.email !== email),
+        prevSignups.filter((signup) => signup.id !== id),
       );
 
       toast.success("Usuário aceito com sucesso!", {
@@ -67,8 +67,8 @@ export default function Home() {
     }
   };
 
-  const denySignup = async (email) => {
-    const res = await fetch(`/api/v1/user/${email}`, { method: "DELETE" });
+  const denySignup = async (id) => {
+    const res = await fetch(`/api/v1/user/${id}`, { method: "DELETE" });
     const resBody = await res.json();
 
     if (!res.ok) {
@@ -80,7 +80,7 @@ export default function Home() {
     }
 
     setSignups((prevSignups) =>
-      prevSignups.filter((signup) => signup.email !== email),
+      prevSignups.filter((signup) => signup.id !== id),
     );
 
     toast.success("Usuário negado com sucesso!", {
@@ -104,8 +104,8 @@ export default function Home() {
               <strong>Email: </strong>
               {signup.email}
             </p>
-            <button onClick={() => acceptSignup(signup.email)}>Aceitar</button>
-            <button onClick={() => denySignup(signup.email)}>Negar</button>
+            <button onClick={() => acceptSignup(signup.id)}>Aceitar</button>
+            <button onClick={() => denySignup(signup.id)}>Negar</button>
           </>
         ))
       ) : (
