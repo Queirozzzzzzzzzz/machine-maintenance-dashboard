@@ -28,8 +28,7 @@ exports.up = (pgm) => {
 
     role: {
       type: "varchar(10)",
-      check: "role IN ('corrective', 'preventive', 'predictive', 'pending')",
-      default: "pending",
+      check: "role IN ('pending', 'corrective', 'preventive', 'predictive')",
     },
 
     progress: {

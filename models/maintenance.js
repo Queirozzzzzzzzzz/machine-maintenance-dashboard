@@ -117,7 +117,7 @@ async function findPending() {
     `
     SELECT * 
     FROM maintenances 
-    WHERE role == 'pending';
+    WHERE role = 'pending';
     `,
   );
 
