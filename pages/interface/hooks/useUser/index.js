@@ -13,6 +13,7 @@ const sessionEndpoint = "/api/v1/sessions";
 const UserContext = createContext({
   user: null,
   isLoadingUser: true,
+  userIsAdmin: false,
   error: undefined,
   fetchUser: async () => {},
   logout: async () => {},
@@ -21,6 +22,7 @@ const UserContext = createContext({
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isLoadingUser, setisLoadingUser] = useState(true);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
   const [error, setError] = useState(undefined);
   const router = useRouter();
 
@@ -38,6 +40,12 @@ export function UserProvider({ children }) {
           features: resBody.features,
           cacheTime: Date.now(),
         };
+
+        if (resBody.features.includes("admin")) {
+          setUserIsAdmin(true);
+        } else {
+          setUserIsAdmin(false);
+        }
 
         setUser(fetchedUser);
         localStorage.setItem("user", JSON.stringify(cachedUserProperties));
@@ -114,6 +122,7 @@ export function UserProvider({ children }) {
   const userContextValue = {
     user,
     isLoadingUser,
+    userIsAdmin,
     error,
     fetchUser,
     logout,
