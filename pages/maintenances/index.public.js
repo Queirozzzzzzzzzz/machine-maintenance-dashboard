@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export default function Maintenances() {
   const router = useRouter();
-  const { user, isLoadingUser } = useUser();
+  const { user, isLoadingUser, userIsAdmin } = useUser();
   const [maintenances, setMaintenances] = useState([]);
   const [isLoadingMaintenances, setIsLoadingMaintenances] = useState(true);
 
@@ -25,7 +25,7 @@ export default function Maintenances() {
 
     return rawMaintenances.map((maintenance) => {
       if (maintenance.responsible === null) {
-        return maintenance; // Return as is if responsible is null
+        return maintenance;
       }
 
       const matchingUser = validResponsibleUsers.find(
@@ -86,7 +86,7 @@ export default function Maintenances() {
     return Promise.all(promises);
   };
 
-  const editMaintenance = async (id) => {
+  const openMaintenance = async (id) => {
     router.push(`/maintenances/${id}`);
   };
 
@@ -137,8 +137,12 @@ export default function Maintenances() {
           <strong>Responsável:</strong> {maintenance.responsible_name}
         </p>
       )}
-      <button onClick={() => editMaintenance(maintenance.id)}>Editar</button>
-      <button onClick={() => deleteMaintenance(maintenance.id)}>Excluir</button>
+      <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
+      {userIsAdmin && (
+        <button onClick={() => deleteMaintenance(maintenance.id)}>
+          Excluir
+        </button>
+      )}
     </div>
   );
 
