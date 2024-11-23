@@ -14,39 +14,12 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
-  .get(getHandler)
-  .post(
-    authorization.canRequest("post:maintenances:manager"),
-    postValidationHandler,
-    postHandler,
-  );
-
-async function getHandler(req, res) {
-  const reqUser = req.context.user;
-
-  let resMaintenances = [];
-  try {
-    if (!reqUser.features.includes("admin")) {
-      resMaintenances = await maintenance.findByUserId(reqUser.id);
-    } else {
-      resMaintenances = await maintenance.findValid();
-    }
-  } catch (err) {
-    throw err;
-  }
-
-  return res.status(200).json(resMaintenances);
-}
+  .post(postValidationHandler, postHandler);
 
 async function postValidationHandler(req, res, next) {
   const cleanValues = validator(req.body, {
     machine: "required",
-    role: "required",
-    criticality: "required",
-    responsible: "optional",
     problem: "optional",
-    expires_at: "required",
-    price: "optional",
   });
 
   req.body = cleanValues;

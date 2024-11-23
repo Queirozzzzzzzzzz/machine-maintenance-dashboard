@@ -14,7 +14,6 @@ exports.up = (pgm) => {
 
     criticality: {
       type: "varchar(10)",
-      notNull: true,
       check: "criticality IN ('light', 'moderate', 'high', 'critical')",
     },
 
@@ -29,8 +28,8 @@ exports.up = (pgm) => {
 
     role: {
       type: "varchar(10)",
-      notNull: true,
       check: "role IN ('corrective', 'preventive', 'predictive', 'pending')",
+      default: "pending",
     },
 
     progress: {
@@ -52,7 +51,6 @@ exports.up = (pgm) => {
 
     expires_at: {
       type: "timestamp with time zone",
-      notNull: true,
     },
 
     updated_at: {

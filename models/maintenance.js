@@ -100,8 +100,26 @@ async function findByUserId(userId) {
   return res.rows;
 }
 
-async function findAll() {
-  const res = await db.query("SELECT * FROM maintenances;");
+async function findValid() {
+  const res = await db.query(
+    `
+    SELECT * 
+    FROM maintenances 
+    WHERE role != 'pending';
+    `,
+  );
+
+  return res.rows;
+}
+
+async function findPending() {
+  const res = await db.query(
+    `
+    SELECT * 
+    FROM maintenances 
+    WHERE role == 'pending';
+    `,
+  );
 
   return res.rows;
 }
@@ -112,5 +130,6 @@ export default {
   removeById,
   findById,
   findByUserId,
-  findAll,
+  findValid,
+  findPending,
 };
