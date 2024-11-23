@@ -8,13 +8,17 @@ import UsersSelectInput from "components/inputs/usersSelectInput";
 
 export default function MaintenancesNew() {
   const router = useRouter();
-  const { user, isLoadingUser } = useUser();
+  const { user, isLoadingUser, userIsAdmin } = useUser();
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) {
       router.push(`/login`);
     }
-  }, [user, router, isLoadingUser]);
+
+    if (router && user && !isLoadingUser && !userIsAdmin) {
+      router.push("/");
+    }
+  }, [user, router, isLoadingUser, userIsAdmin]);
 
   const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
