@@ -70,6 +70,7 @@ async function deleteHandler(req, res) {
 }
 
 async function patchValidationHandler(req, res, next) {
+  console.log(req.body);
   const cleanQueryValues = validator(req.query, {
     id: "required",
   });

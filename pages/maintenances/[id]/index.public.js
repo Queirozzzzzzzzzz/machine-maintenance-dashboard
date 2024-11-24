@@ -123,11 +123,14 @@ export default function Maintenance() {
     aborted: "Cancelada",
   };
 
-  function formatDate(dateValue) {
-    if (!dateValue || isNaN(new Date(dateValue))) {
-      return "";
-    }
-    return new Date(dateValue).toLocaleDateString();
+  function formatDate(isoDate) {
+    const date = new Date(isoDate);
+
+    const utcYear = date.getUTCFullYear();
+    const utcMonth = date.getUTCMonth() + 1;
+    const utcDay = date.getUTCDate();
+
+    return `${utcDay.toString().padStart(2, "0")}/${utcMonth.toString().padStart(2, "0")}/${utcYear}`;
   }
 
   const renderMaintenance = () => (
