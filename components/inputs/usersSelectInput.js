@@ -13,7 +13,10 @@ export default function UsersSelectInput({ register, label }) {
         if (res.status == 200) {
           setUsers(resBody);
         } else {
-          toast.error(resBody.message);
+          toast.error(resBody.message, {
+            className: "alert error",
+            duration: 2000,
+          });
         }
       } catch (error) {
         console.error("Error fetching users:", error);

@@ -36,8 +36,9 @@ async function update(id, values) {
             criticality = $4, 
             responsible = $5, 
             problem = $6,
-            price = $7,
-            expires_at = $8
+            progress = $7,
+            price = $8,
+            expires_at = $9
         WHERE id = $1
         RETURNING *;
     `,
@@ -48,6 +49,7 @@ async function update(id, values) {
       newData.criticality,
       newData.responsible,
       newData.problem,
+      newData.progress,
       newData.price,
       newData.expires_at,
     ],

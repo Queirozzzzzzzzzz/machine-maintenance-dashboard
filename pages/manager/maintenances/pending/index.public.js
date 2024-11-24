@@ -69,13 +69,6 @@ export default function MaintenancesPending() {
     }
   };
 
-  const criticalityTranslations = {
-    light: "Leve",
-    moderate: "Moderado",
-    high: "Alto",
-    critical: "Crítico",
-  };
-
   const renderMaintenance = (maintenance) => (
     <div key={maintenance.id}>
       <h3>{maintenance.machine}</h3>

@@ -18,6 +18,25 @@ export default function Maintenances() {
     }
   }, [user, router, isLoadingUser]);
 
+  const fetchResponsibleUsers = async (maintenances) => {
+    const responsibles = [...new Set(maintenances.map((m) => m.responsible))];
+
+    const promises = responsibles.map(async (r) => {
+      try {
+        if (r == null) return null;
+
+        const res = await fetch(`/api/v1/user/${r}`);
+        const resBody = await res.json();
+        return { id: r, responsible_name: resBody.full_name };
+      } catch (error) {
+        console.error(`Error fetching user ${r}:`, error);
+        return null;
+      }
+    });
+
+    return Promise.all(promises);
+  };
+
   async function mergeResponsibleUsers(rawMaintenances, responsibleUsers) {
     const validResponsibleUsers = responsibleUsers.filter(
       (user) => user !== null,
@@ -67,25 +86,6 @@ export default function Maintenances() {
     }
   };
 
-  const fetchResponsibleUsers = async (maintenances) => {
-    const responsibles = [...new Set(maintenances.map((m) => m.responsible))];
-
-    const promises = responsibles.map(async (r) => {
-      try {
-        if (r == null) return null;
-
-        const res = await fetch(`/api/v1/user/${r}`);
-        const resBody = await res.json();
-        return { id: r, responsible_name: resBody.full_name };
-      } catch (error) {
-        console.error(`Error fetching user ${r}:`, error);
-        return null;
-      }
-    });
-
-    return Promise.all(promises);
-  };
-
   const openMaintenance = async (id) => {
     router.push(`/maintenances/${id}`);
   };
@@ -127,9 +127,8 @@ export default function Maintenances() {
       </p>
 
       <p>
-        <strong>Estado:</strong>{" "}
-        {criticalityTranslations[maintenance.criticality] ||
-          maintenance.criticality}
+        <strong>Criticidade:</strong>{" "}
+        {criticalityTranslations[maintenance.criticality]}
       </p>
 
       {maintenance.responsible && (

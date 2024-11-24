@@ -105,7 +105,7 @@ export default function MaintenancesNew() {
         </div>
 
         <div>
-          <label htmlFor="criticality">Tipo de manutenção:</label>
+          <label htmlFor="criticality">Criticidade da manutenção:</label>
           <select {...register("criticality")}>
             <option value="">Nulo</option>
             <option value="light">Leve</option>

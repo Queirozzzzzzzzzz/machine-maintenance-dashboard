@@ -5,6 +5,7 @@ import authorization from "models/authorization";
 import validator from "models/validator";
 import controller from "models/controller";
 import maintenance from "models/maintenance";
+import { ForbiddenError } from "errors";
 
 export default nextConnect({
   attachParams: true,
@@ -14,12 +15,48 @@ export default nextConnect({
   .use(controller.injectRequestMetadata)
   .use(authentication.injectUser)
   .use(controller.logRequest)
+  .get(getValidationHandler, getHandler)
   .delete(authorization.canRequest("update:maintenances"), deleteHandler)
   .patch(
     authorization.canRequest("update:maintenances"),
     patchValidationHandler,
     patchHandler,
   );
+
+async function getValidationHandler(req, res, next) {
+  const cleanValues = validator(req.query, {
+    id: "required",
+  });
+
+  req.query = cleanValues;
+
+  next();
+}
+
+async function getHandler(req, res) {
+  const reqUser = req.context.user;
+
+  let resMaintenance = [];
+  try {
+    resMaintenance = await maintenance.findById(req.query.id);
+
+    if (
+      !reqUser.features.includes("admin") &&
+      resMaintenance.responsible != reqUser.id
+    ) {
+      throw new ForbiddenError({
+        message: `Você não possui permissão para carregar esta manutenção.`,
+        action: `Verifique se este usuário possui a feature "admin".`,
+        errorLocationCode:
+          "CONTROLLER:MAINTENANCES:ID:GET_HANDLER:CAN_NOT_READ_MAINTENANCE",
+      });
+    }
+  } catch (err) {
+    throw err;
+  }
+
+  return res.status(200).json(resMaintenance);
+}
 
 async function deleteHandler(req, res) {
   let deletedMaintenance = [];
@@ -39,6 +76,7 @@ async function patchValidationHandler(req, res, next) {
     criticality: "optional",
     responsible: "optional",
     problem: "optional",
+    progress: "optional",
     expires_at: "optional",
     price: "optional",
   });

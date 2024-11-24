@@ -266,6 +266,19 @@ const schemas = {
     });
   },
 
+  progress: function () {
+    return Joi.object({
+      progress: Joi.string()
+        .valid("ongoing", "concluded", "aborted")
+        .max(10)
+        .when("$required.progress", {
+          is: "required",
+          then: Joi.required(),
+          otherwise: Joi.optional(),
+        }),
+    });
+  },
+
   expires_at: function () {
     return Joi.object({
       expires_at: Joi.date().iso().when("$required.expires_at", {
