@@ -37,8 +37,10 @@ async function update(id, values) {
             responsible = $5, 
             problem = $6,
             progress = $7,
-            price = $8,
-            expires_at = $9
+            concluded_at = $8,
+            price = $9,
+            expires_at = $10,
+            updated_at = (now() at time zone 'utc')
         WHERE id = $1
         RETURNING *;
     `,
@@ -50,6 +52,7 @@ async function update(id, values) {
       newData.responsible,
       newData.problem,
       newData.progress,
+      newData.concluded_at,
       newData.price,
       newData.expires_at,
     ],

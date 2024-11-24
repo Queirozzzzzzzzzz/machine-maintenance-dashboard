@@ -118,12 +118,19 @@ export default function Maintenances() {
     critical: "Crítico",
   };
 
+  function formatDate(dateValue) {
+    if (!dateValue || isNaN(new Date(dateValue))) {
+      return "";
+    }
+    return new Date(dateValue).toLocaleDateString();
+  }
+
   const renderMaintenance = (maintenance) => (
     <div key={maintenance.id}>
       <h3>{maintenance.machine}</h3>
       <p>
-        <strong>Prazo:</strong>{" "}
-        {new Date(maintenance.expires_at).toLocaleDateString()}
+        <strong>Prazo:</strong> <strong>Data:</strong>{" "}
+        {formatDate(maintenance.expires_at)}
       </p>
 
       <p>

@@ -55,7 +55,10 @@ export default function Maintenance() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ progress: "concluded" }),
+        body: JSON.stringify({
+          progress: "concluded",
+          concluded_at: new Date().toISOString(),
+        }),
       });
 
       if (res.status == 200) {
@@ -63,6 +66,7 @@ export default function Maintenance() {
           className: "alert success",
           duration: 2000,
         });
+        window.location.reload();
       } else {
         const resBody = await res.json();
         console.error(resBody);
@@ -119,12 +123,18 @@ export default function Maintenance() {
     aborted: "Cancelada",
   };
 
+  function formatDate(dateValue) {
+    if (!dateValue || isNaN(new Date(dateValue))) {
+      return "";
+    }
+    return new Date(dateValue).toLocaleDateString();
+  }
+
   const renderMaintenance = () => (
     <div key={maintenance.id}>
       <h3>{maintenance.machine}</h3>
       <p>
-        <strong>Data:</strong>{" "}
-        {new Date(maintenance.expires_at).toLocaleDateString()}
+        <strong>Data:</strong> {formatDate(maintenance.expires_at)}
       </p>
       <p>
         <strong>Criticidade:</strong>{" "}
@@ -139,12 +149,17 @@ export default function Maintenance() {
       <p>
         <strong>Objetivo:</strong> {maintenance.problem}
       </p>
+      {maintenance.progress === "concluded" ? (
+        <p>
+          <strong>Concuída em:</strong> {formatDate(maintenance.concluded_at)}
+        </p>
+      ) : null}
 
-      {maintenance.progress !== "concluded" ? (
+      {maintenance.progress !== "concluded" && maintenance.expires_at && (
         <button onClick={() => finishMaintenance(maintenance.id)}>
           Concluir
         </button>
-      ) : null}
+      )}
 
       {userIsAdmin && (
         <>

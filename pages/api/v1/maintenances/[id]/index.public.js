@@ -78,6 +78,7 @@ async function patchValidationHandler(req, res, next) {
     problem: "optional",
     progress: "optional",
     expires_at: "optional",
+    concluded_at: "optional",
     price: "optional",
   });
 

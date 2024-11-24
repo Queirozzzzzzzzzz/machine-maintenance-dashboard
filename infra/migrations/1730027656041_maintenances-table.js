@@ -52,6 +52,10 @@ exports.up = (pgm) => {
       type: "timestamp with time zone",
     },
 
+    concluded_at: {
+      type: "timestamp with time zone",
+    },
+
     updated_at: {
       type: "timestamp with time zone",
       notNull: true,
