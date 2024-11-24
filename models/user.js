@@ -7,7 +7,11 @@ async function create(data) {
   await validateUniqueEmail(data.email);
   await hashPasswordInObject(data);
 
-  data.features = ["read:session", "read:user:self"];
+  data.features = [
+    "read:session",
+    "read:user:self",
+    "update:maintenances:self",
+  ];
 
   const query = {
     text: `INSERT INTO users (full_name, email, password, features, role) VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
@@ -67,6 +71,7 @@ async function createAdmin(data) {
     "read:maintenances:all",
     "post:maintenances:manager",
     "update:maintenances",
+    "update:maintenances:self",
     "ban:user",
     "active",
   ];

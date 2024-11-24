@@ -11,6 +11,7 @@ const availableFeatures = new Set([
 
   // MAINTENANCES
   "read:maintenances:self",
+  "update:maintenances:self",
 
   // MANAGER
   "read:user",

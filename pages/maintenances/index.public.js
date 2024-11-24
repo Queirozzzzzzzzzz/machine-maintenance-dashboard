@@ -129,8 +129,7 @@ export default function Maintenances() {
     <div key={maintenance.id}>
       <h3>{maintenance.machine}</h3>
       <p>
-        <strong>Prazo:</strong> <strong>Data:</strong>{" "}
-        {formatDate(maintenance.expires_at)}
+        <strong>Prazo:</strong> {formatDate(maintenance.expires_at)}
       </p>
 
       <p>

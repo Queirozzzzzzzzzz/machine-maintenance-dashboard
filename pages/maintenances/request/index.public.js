@@ -1,20 +1,8 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { useUser } from "pages/interface";
-
 export default function MaintenancesRequest() {
-  const router = useRouter();
-  const { user, isLoadingUser } = useUser();
-
-  useEffect(() => {
-    if (router && !user && !isLoadingUser) {
-      router.push(`/login`);
-    }
-  }, [user, router, isLoadingUser]);
-
   const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
       machine: null,

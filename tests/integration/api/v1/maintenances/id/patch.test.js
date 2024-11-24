@@ -32,7 +32,7 @@ describe("PATCH to /api/v1/maintenances/[id]", () => {
         "Usuário não pode executar esta operação.",
       );
       expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "update:maintenances".`,
+        `Verifique se este usuário possui a feature "update:maintenances:self".`,
       );
       expect(uuidVersion(resBody.error_id)).toEqual(4);
       expect(uuidVersion(resBody.request_id)).toEqual(4);
@@ -52,31 +52,32 @@ describe("PATCH to /api/v1/maintenances/[id]", () => {
     });
 
     test("Retrieving information", async () => {
-      const testMaintenance = await orchestrator.createMaintenance();
+      const reqUser = await orchestrator.createUser();
+      const testMaintenance = await orchestrator.createMaintenance({
+        responsible: reqUser.id,
+      });
       const reqB = new RequestBuilder(
         `/api/v1/maintenances/${testMaintenance.id}`,
       );
-      await reqB.buildUser();
+      await reqB.setUser(reqUser);
 
-      const { res, resBody } = await reqB.patch();
+      const { res, resBody } = await reqB.patch({
+        progress: "concluded",
+        concluded_at: new Date().toISOString(),
+      });
 
-      expect(res.status).toEqual(403);
-      expect(resBody.status_code).toEqual(403);
-      expect(resBody.name).toEqual("ForbiddenError");
-      expect(resBody.message).toEqual(
-        "Usuário não pode executar esta operação.",
-      );
-      expect(resBody.action).toEqual(
-        `Verifique se este usuário possui a feature "update:maintenances".`,
-      );
-      expect(uuidVersion(resBody.error_id)).toEqual(4);
-      expect(uuidVersion(resBody.request_id)).toEqual(4);
-      expect(resBody.error_location_code).toEqual(
-        "MODEL:AUTHORIZATION:CAN_REQUEST:FEATURE_NOT_FOUND",
-      );
-
-      const parsedCookies = orchestrator.parseSetCookies(res);
-      expect(parsedCookies).toStrictEqual({});
+      expect(res.status).toBe(200);
+      expect(res.status).toBe(200);
+      expect(resBody.machine).toEqual(testMaintenance.machine);
+      expect(resBody.role).toBe(testMaintenance.role);
+      expect(resBody.criticality).toBe(testMaintenance.criticality);
+      expect(resBody.problem).toBe(testMaintenance.problem);
+      expect(resBody.progress).toBe("concluded");
+      expect(resBody.price).toBe(testMaintenance.price);
+      expect(Date.parse(resBody.expires_at)).not.toEqual(NaN);
+      expect(Date.parse(resBody.concluded_at)).not.toEqual(NaN);
+      expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
+      expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
     });
   });
 

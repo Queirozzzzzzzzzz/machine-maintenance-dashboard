@@ -18,7 +18,7 @@ export default nextConnect({
   .get(getValidationHandler, getHandler)
   .delete(authorization.canRequest("update:maintenances"), deleteHandler)
   .patch(
-    authorization.canRequest("update:maintenances"),
+    authorization.canRequest("update:maintenances:self"),
     patchValidationHandler,
     patchHandler,
   );
@@ -70,6 +70,12 @@ async function deleteHandler(req, res) {
 }
 
 async function patchValidationHandler(req, res, next) {
+  const cleanQueryValues = validator(req.query, {
+    id: "required",
+  });
+
+  req.query = cleanQueryValues;
+
   const cleanValues = validator(req.body, {
     machine: "optional",
     role: "optional",
@@ -88,8 +94,23 @@ async function patchValidationHandler(req, res, next) {
 }
 
 async function patchHandler(req, res) {
+  const oldMaintenance = await maintenance.findById(req.query.id);
+  const reqUser = req.context.user;
+
   let newMaintenance = {};
   try {
+    if (
+      !reqUser.features.includes("admin") &&
+      oldMaintenance.responsible != reqUser.id
+    ) {
+      throw new ForbiddenError({
+        message: `Você não possui permissão para carregar esta manutenção.`,
+        action: `Verifique se este usuário possui a feature "admin".`,
+        errorLocationCode:
+          "CONTROLLER:MAINTENANCES:ID:GET_HANDLER:CAN_NOT_READ_MAINTENANCE",
+      });
+    }
+
     newMaintenance = await maintenance.update(req.query.id, req.body);
   } catch (err) {
     throw err;

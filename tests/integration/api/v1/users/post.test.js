@@ -37,7 +37,11 @@ describe("POST /api/v1/users", () => {
       expect(res.status).toBe(201);
       expect(uuidVersion(resBody.id)).toEqual(4);
       expect(resBody.full_name).toEqual(values.full_name);
-      expect(resBody.features).toEqual(["read:session", "read:user:self"]);
+      expect(resBody.features).toEqual([
+        "read:session",
+        "read:user:self",
+        "update:maintenances:self",
+      ]);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
 
@@ -83,7 +87,11 @@ describe("POST /api/v1/users", () => {
       expect(res.status).toBe(201);
       expect(uuidVersion(resBody.id)).toEqual(4);
       expect(resBody.full_name).toEqual(values.full_name);
-      expect(resBody.features).toEqual(["read:session", "read:user:self"]);
+      expect(resBody.features).toEqual([
+        "read:session",
+        "read:user:self",
+        "update:maintenances:self",
+      ]);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
 
@@ -121,7 +129,11 @@ describe("POST /api/v1/users", () => {
       expect(res.status).toBe(201);
       expect(uuidVersion(resBody.id)).toEqual(4);
       expect(resBody.full_name).toEqual("extraSpaceInTheEnd");
-      expect(resBody.features).toEqual(["read:session", "read:user:self"]);
+      expect(resBody.features).toEqual([
+        "read:session",
+        "read:user:self",
+        "update:maintenances:self",
+      ]);
       expect(Date.parse(resBody.created_at)).not.toEqual(NaN);
       expect(Date.parse(resBody.updated_at)).not.toEqual(NaN);
 
