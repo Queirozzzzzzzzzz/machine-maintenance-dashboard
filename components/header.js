@@ -7,11 +7,14 @@ import { useUser } from "pages/interface";
 
 export default function Header({ children }) {
   const router = useRouter();
-  const { user, isLoadingUser, userIsAdmin } = useUser();
+  const { user, isLoadingUser } = useUser();
   const [sidebar, setSidebar] = useState(false);
+  const [userIsAdmin, setUserIsAdmin] = useState(false);
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push(`/login`);
+
+    if (user && user.features.includes("admin")) setUserIsAdmin(true);
   }, [user, router, isLoadingUser]);
 
   async function handleLogoutSubmit() {
