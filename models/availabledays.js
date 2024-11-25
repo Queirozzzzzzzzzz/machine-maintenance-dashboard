@@ -21,12 +21,12 @@ async function findAll() {
         SELECT * 
         FROM available_days;
         `,
-    values: [date],
+    values: [],
   };
 
   const res = await db.query(query);
 
-  return res.rows[0];
+  return res.rows;
 }
 
 export default {
