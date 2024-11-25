@@ -17,10 +17,11 @@ export default function Dashboard() {
 
   const [responsibleFilter, setResponsibleFilter] = useState(null);
 
-  const [barChartOptions, setBarChartOptions] = useState({
+  const [progressData, setProgressData] = useState({
     series: [],
     chart: { type: "bar" },
   });
+  const [roleData, setRoleData] = useState([]);
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push("/");
@@ -53,6 +54,24 @@ export default function Dashboard() {
       setShowingMaintenances(filteredMaintenances);
     }
   }, [responsibleFilter]);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("/api/v1/users");
+      const resBody = await res.json();
+
+      if (res.status == 200) {
+        setUsers(resBody);
+      } else {
+        toast.error(resBody.message, {
+          className: "alert error",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   const fetchMaintenances = async () => {
     try {
@@ -141,26 +160,49 @@ export default function Dashboard() {
       ],
     };
 
-    setBarChartOptions(progressOptions);
+    setProgressData(progressOptions);
+
+    // Role
+    const countRoleValues = () =>
+      showingMaintenances.reduce(
+        (statuses, { role }) => {
+          if (role === "preventive") statuses.preventive++;
+          if (role === "predictive") statuses.predictive++;
+          if (role === "corrective") statuses.corrective++;
+          return statuses;
+        },
+        { preventive: 0, predictive: 0, corrective: 0 },
+      );
+
+    const roleValues = countRoleValues();
+
+    var roleOptions = {
+      series: [
+        roleValues.preventive,
+        roleValues.predictive,
+        roleValues.corrective,
+      ],
+      chart: {
+        type: "pie",
+      },
+      labels: ["Preventiva", "Preditiva", "Corretiva"],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 300,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
+    setRoleData(roleOptions);
   }, [showingMaintenances]);
-
-  const fetchUsers = async () => {
-    try {
-      const res = await fetch("/api/v1/users");
-      const resBody = await res.json();
-
-      if (res.status == 200) {
-        setUsers(resBody);
-      } else {
-        toast.error(resBody.message, {
-          className: "alert error",
-          duration: 2000,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
 
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
@@ -183,14 +225,28 @@ export default function Dashboard() {
       </select>
 
       <div className="charts">
-        {barChartOptions && (
+        {progressData && (
           <div className="charts-card">
             <p className="chart-title">Progresso das Manutenções</p>
             <div id="bar-chart">
               <Chart
-                options={barChartOptions}
-                series={barChartOptions.series}
+                options={progressData}
+                series={progressData.series}
                 type="bar"
+                height={350}
+              />
+            </div>
+          </div>
+        )}
+
+        {roleData && (
+          <div className="charts-card">
+            <p className="chart-title">Tipos das Manutenções</p>
+            <div id="pie-chart">
+              <Chart
+                options={roleData}
+                series={roleData.series}
+                type="pie"
                 height={350}
               />
             </div>
