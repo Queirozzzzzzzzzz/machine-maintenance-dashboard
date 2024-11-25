@@ -3,7 +3,6 @@ import RequestBuilder from "tests/requestBuilder";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
-  await orchestrator.dropAllTables();
   await orchestrator.runPendingMigrations();
 });
 

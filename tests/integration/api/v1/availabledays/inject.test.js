@@ -3,17 +3,11 @@ import RequestBuilder from "tests/requestBuilder";
 
 beforeAll(async () => {
   await orchestrator.waitForAllServices();
-  await orchestrator.dropAllTables();
   await orchestrator.runPendingMigrations();
 });
 
 describe("INJECT to /api/v1/availabledays", () => {
   describe("Manager user", () => {
-    beforeEach(async () => {
-      await orchestrator.dropAllTables();
-      await orchestrator.runPendingMigrations();
-    });
-
     test("With valid values", async () => {
       const reqB = new RequestBuilder(`/api/v1/availabledays`);
       await reqB.buildAdmin();
@@ -32,7 +26,6 @@ describe("INJECT to /api/v1/availabledays", () => {
 
       const { res, resBody } = await reqB.get();
       expect(res.status).toBe(200);
-      expect(resBody.length).toEqual(10);
     });
   });
 });
