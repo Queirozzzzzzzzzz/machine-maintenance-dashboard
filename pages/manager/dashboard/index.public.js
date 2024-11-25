@@ -227,7 +227,7 @@ export default function Dashboard() {
       )}
 
       <div className="charts">
-        {progressData.length > 0 && (
+        {progressData.series && (
           <div className="charts-card">
             <p className="chart-title">Progresso das Manutenções</p>
             <div id="bar-chart">
@@ -241,7 +241,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {roleData.length > 0 && (
+        {roleData.series && (
           <div className="charts-card">
             <p className="chart-title">Tipos das Manutenções</p>
             <div id="pie-chart">
