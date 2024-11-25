@@ -80,6 +80,38 @@ export default function Maintenance() {
     }
   };
 
+  const abortMaintenance = async (id) => {
+    try {
+      const res = await fetch(`/api/v1/maintenances/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          progress: "aborted",
+          concluded_at: new Date().toISOString(),
+        }),
+      });
+
+      if (res.status == 200) {
+        toast.success("Manutenção cancelada com sucesso!", {
+          className: "alert success",
+          duration: 2000,
+        });
+        window.location.reload();
+      } else {
+        const resBody = await res.json();
+        console.error(resBody);
+        throw new Error("Ocorreu um erro ao cancelar a manutenção.");
+      }
+    } catch (err) {
+      toast.error(err.message || "Ocorreu um erro ao cancelar a manutenção!", {
+        className: "alert error",
+        duration: 2000,
+      });
+    }
+  };
+
   const editMaintenance = async (id) => {
     router.push(`/maintenances/${id}/edit`);
   };
@@ -158,11 +190,19 @@ export default function Maintenance() {
         </p>
       ) : null}
 
-      {maintenance.progress !== "concluded" && maintenance.expires_at && (
-        <button onClick={() => finishMaintenance(maintenance.id)}>
-          Concluir
-        </button>
-      )}
+      {maintenance.progress !== "concluded" &&
+        maintenance.progress !== "aborted" &&
+        maintenance.expires_at && (
+          <>
+            <button onClick={() => finishMaintenance(maintenance.id)}>
+              Concluir
+            </button>
+
+            <button onClick={() => abortMaintenance(maintenance.id)}>
+              Cancelar
+            </button>
+          </>
+        )}
 
       {userIsAdmin && (
         <>
