@@ -52,7 +52,7 @@ export default function Dashboard() {
       const filteredMaintenances = applyFilters(maintenances);
       setShowingMaintenances(filteredMaintenances);
     }
-  }, [dateFilter, monthFilter, yearFilter, responsibleFilter, roleFilter]);
+  }, [responsibleFilter]);
 
   const fetchMaintenances = async () => {
     try {
