@@ -24,7 +24,7 @@ describe("INJECT to /api/v1/availabledays", () => {
         ),
       );
 
-      const { res, resBody } = await reqB.get();
+      const { res } = await reqB.get();
       expect(res.status).toBe(200);
     });
   });
