@@ -1,3 +1,5 @@
+/* ---------- MAIN ---------- */
+
 body {
   margin: 0;
   padding: 0;
@@ -252,6 +254,58 @@ body {
 .alert.success {
   color: green;
 }
+
+/* ---------- FORM ---------- */
+
+form {
+  width: 50%;
+}
+
+form select,
+form textarea,
+form input,
+button,
+form button {
+  border: none;
+  padding: 0.5rem;
+  margin: 0.15rem;
+}
+
+form .input-section {
+  display: flex;
+  flex-direction: column;
+}
+
+form .input-section label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+button,
+form button {
+  margin-top: 1rem;
+  font-weight: bold;
+  background-color: #ffffff;
+}
+
+/* ---------- LOGIN/SIGNUP ---------- */
+
+.signup,
+.login {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-button,
+.login-button {
+  margin: 0;
+}
+
+/* ---------- EXTRAS ---------- */
 
 /* ---------- MEDIA QUERIES ---------- */
 

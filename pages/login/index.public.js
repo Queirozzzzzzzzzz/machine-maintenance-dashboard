@@ -49,28 +49,36 @@ export default function signup() {
 
   return (
     <>
-      <h1>Login</h1>
-      <button onClick={toSignup}>Cadastrar</button>
-      <p>{errorMessage}</p>
-      <form onSubmit={signupOnSubmit}>
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          name="email"
-          ref={emailRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <label htmlFor="password">Senha</label>
-        <input
-          type="password"
-          name="password"
-          ref={passwordRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <button type="submit">Entrar</button>
-      </form>
+      <div className="signup">
+        <h1>Login</h1>
+        <button className="login-button" onClick={toSignup}>
+          Não tenho uma conta
+        </button>
+        <p>{errorMessage}</p>
+        <form onSubmit={signupOnSubmit}>
+          <div className="input-section">
+            <input
+              type="text"
+              name="email"
+              ref={emailRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Email"
+            ></input>
+          </div>
+          <div className="input-section">
+            <input
+              type="password"
+              name="password"
+              ref={passwordRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Senha"
+            ></input>
+          </div>
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
     </>
   );
 }

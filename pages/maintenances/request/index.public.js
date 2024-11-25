@@ -56,12 +56,12 @@ export default function MaintenancesRequest() {
     <>
       <h1>Solicitar Manutenção</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
+        <div className="input-section">
           <label htmlFor="machine">Nome da máquina:</label>
           <input {...register("machine")} id="machine" />
         </div>
 
-        <div>
+        <div className="input-section">
           <label htmlFor="problem">Problema:</label>
           <textarea {...register("problem")} id="problem" rows="3" />
         </div>

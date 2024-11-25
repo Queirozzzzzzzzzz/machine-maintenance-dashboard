@@ -53,43 +53,56 @@ export default function signup() {
 
   return (
     <>
-      <h1>Cadastro</h1>
-      <button onClick={toLogin}>Login</button>
-      <form onSubmit={signupOnSubmit}>
-        <label htmlFor="fullName">Nome Completo</label>
-        <input
-          type="text"
-          name="fullName"
-          ref={fullNameRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <label htmlFor="email">Email</label>
-        <input
-          type="text"
-          name="email"
-          ref={emailRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <label htmlFor="password">Senha</label>
-        <input
-          type="password"
-          name="password"
-          ref={passwordRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <label htmlFor="confirmPassword">Confirmar Senha</label>
-        <input
-          type="password"
-          name="confirmPassword"
-          ref={confirmPasswordRef}
-          autoComplete="off"
-          autoCorrect="off"
-        ></input>
-        <button type="submit">Criar</button>
-      </form>
+      <div className="login">
+        <h1>Cadastro</h1>
+        <button className="signup-button" onClick={toLogin}>
+          Já tenho uma conta
+        </button>
+        <p></p>
+        <form onSubmit={signupOnSubmit}>
+          <div className="input-section">
+            <input
+              type="text"
+              name="fullName"
+              ref={fullNameRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Nome Completo"
+            ></input>
+          </div>
+          <div className="input-section">
+            <input
+              type="text"
+              name="email"
+              ref={emailRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Email"
+            ></input>
+          </div>
+          <div className="input-section">
+            <input
+              type="password"
+              name="password"
+              ref={passwordRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Senha"
+            ></input>
+          </div>
+          <div className="input-section">
+            <input
+              type="password"
+              name="confirmPassword"
+              ref={confirmPasswordRef}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="Confirmar Senha"
+            ></input>
+          </div>
+          <button type="submit">Criar</button>
+        </form>
+      </div>
     </>
   );
 }

@@ -127,7 +127,7 @@ export default function Maintenance() {
       {maintenance && (
         <>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
+            <div className="input-section">
               <label htmlFor="machine">Nome da máquina:</label>
               <input {...register("machine")} id="machine" />
             </div>
@@ -138,12 +138,12 @@ export default function Maintenance() {
               label="Responsável:"
             />
 
-            <div>
+            <div className="input-section">
               <label htmlFor="problem">Objetivo:</label>
               <textarea {...register("problem")} id="problem" rows="3" />
             </div>
 
-            <div>
+            <div className="input-section">
               <label htmlFor="role">Tipo de manutenção:</label>
               <select {...register("role")}>
                 <option value="">Nulo</option>
@@ -153,7 +153,7 @@ export default function Maintenance() {
               </select>
             </div>
 
-            <div>
+            <div className="input-section">
               <label htmlFor="criticality">Criticidade da manutenção:</label>
               <select {...register("criticality")}>
                 <option value="">Nulo</option>
@@ -164,12 +164,12 @@ export default function Maintenance() {
               </select>
             </div>
 
-            <div>
+            <div className="input-section">
               <label htmlFor="expires_at">Data esperada para realização:</label>
               <input type="date" {...register("expires_at")} id="expires_at" />
             </div>
 
-            <div>
+            <div className="input-section">
               <label htmlFor="price">Preço:</label>
               <input
                 type="number"

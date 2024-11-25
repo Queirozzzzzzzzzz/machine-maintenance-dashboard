@@ -32,7 +32,7 @@ export default function UsersSelectInput({ register, label }) {
   };
 
   return (
-    <div>
+    <div className="input-section">
       <label htmlFor={"responsible"}>{label}</label>
       <select
         {...register("responsible")}
