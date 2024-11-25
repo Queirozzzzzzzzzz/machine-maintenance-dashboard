@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -9,6 +9,9 @@ import UsersSelectInput from "components/inputs/usersSelectInput";
 export default function MaintenancesNew() {
   const router = useRouter();
   const { user, isLoadingUser, userIsAdmin } = useUser();
+  const [availabledays, setAvailabledays] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
+  const [isPreventive, setIsPreventive] = useState(false);
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) {
@@ -18,7 +21,21 @@ export default function MaintenancesNew() {
     if (router && user && !isLoadingUser && !userIsAdmin) {
       router.push("/");
     }
+
+    if (availabledays.length <= 0) fetchAvailabledays();
   }, [user, router, isLoadingUser, userIsAdmin]);
+
+  async function fetchAvailabledays() {
+    const res = await fetch("/api/v1/availabledays");
+    const resBody = await res.json();
+
+    const availableDatesValue = resBody.map(
+      (day) => new Date(day.date).toISOString().split("T")[0],
+    );
+
+    setAvailableDates(availableDatesValue);
+    setAvailabledays(resBody);
+  }
 
   const { register, handleSubmit, reset, formState } = useForm({
     defaultValues: {
@@ -38,6 +55,11 @@ export default function MaintenancesNew() {
     }
   }, [formState, reset]);
 
+  const handleRoleChange = (event) => {
+    const role = event.target.value;
+    setIsPreventive(role === "preventive");
+  };
+
   const onSubmit = async (data) => {
     try {
       const filteredData = Object.fromEntries(
@@ -46,6 +68,20 @@ export default function MaintenancesNew() {
           value === "" ? undefined : value,
         ]),
       );
+
+      if (filteredData.role === "preventive") {
+        const selectedDate = filteredData.expires_at;
+        if (!availableDates.includes(selectedDate)) {
+          toast.error(
+            "A data selecionada não está disponível para manutenção preventiva.",
+            {
+              className: "alert error",
+              duration: 2000,
+            },
+          );
+          return;
+        }
+      }
 
       const res = await fetch("/api/v1/maintenances", {
         method: "POST",
@@ -96,7 +132,7 @@ export default function MaintenancesNew() {
 
         <div className="input-section">
           <label htmlFor="role">Tipo de manutenção:</label>
-          <select {...register("role")}>
+          <select {...register("role")} onChange={handleRoleChange}>
             <option value="">Nulo</option>
             <option value="corrective">Corretiva</option>
             <option value="preventive">Preventiva</option>
@@ -117,7 +153,21 @@ export default function MaintenancesNew() {
 
         <div className="input-section">
           <label htmlFor="expires_at">Data esperada para realização:</label>
-          <input type="date" {...register("expires_at")} id="expires_at" />
+          {isPreventive ? (
+            <select {...register("expires_at")} id="expires_at">
+              <option value="">Selecione uma data</option>
+              {availabledays.map((day) => (
+                <option
+                  key={day.id}
+                  value={new Date(day.date).toISOString().split("T")[0]}
+                >
+                  {new Date(day.date).toLocaleDateString()}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input type="date" {...register("expires_at")} id="expires_at" />
+          )}
         </div>
 
         <div className="input-section">
