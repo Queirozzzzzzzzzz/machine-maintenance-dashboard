@@ -212,20 +212,22 @@ export default function Dashboard() {
     <div>
       <h1>Dashboard</h1>
 
-      <select
-        value={responsibleFilter}
-        onChange={(e) => setResponsibleFilter(e.target.value)}
-      >
-        <option value="">Responsável</option>
-        {users.map((user) => (
-          <option key={user.id} value={user.id}>
-            {user.full_name}
-          </option>
-        ))}
-      </select>
+      {users && (
+        <select
+          value={responsibleFilter || ""}
+          onChange={(e) => setResponsibleFilter(e.target.value)}
+        >
+          <option value="">Responsável</option>
+          {users.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.full_name}
+            </option>
+          ))}
+        </select>
+      )}
 
       <div className="charts">
-        {progressData && (
+        {progressData.length > 0 && (
           <div className="charts-card">
             <p className="chart-title">Progresso das Manutenções</p>
             <div id="bar-chart">
@@ -239,7 +241,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {roleData && (
+        {roleData.length > 0 && (
           <div className="charts-card">
             <p className="chart-title">Tipos das Manutenções</p>
             <div id="pie-chart">
