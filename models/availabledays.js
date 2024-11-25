@@ -15,29 +15,13 @@ async function create(date) {
   return res.rows[0];
 }
 
-async function removeById(id) {
+async function findAll() {
   const query = {
     text: `
-        DELETE FROM available_days
-        WHERE id = $1
-        RETURNING *;
+        SELECT * 
+        FROM available_days;
         `,
-    values: [id],
-  };
-
-  const res = await db.query(query);
-
-  return res.rows[0];
-}
-
-async function removeByDate(date) {
-  const query = {
-    text: `
-          DELETE FROM available_days
-          WHERE date = $1
-          RETURNING *;
-          `,
-    values: [id],
+    values: [date],
   };
 
   const res = await db.query(query);
@@ -47,6 +31,5 @@ async function removeByDate(date) {
 
 export default {
   create,
-  removeById,
-  removeByDate,
+  findAll,
 };
