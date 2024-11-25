@@ -10,7 +10,13 @@ export default function Dashboard() {
   const router = useRouter();
   const { user, isLoadingUser } = useUser();
   const [maintenances, setMaintenances] = useState([]);
+  const [showingMaintenances, setShowingMaintenances] = useState([]);
   const [isLoadingMaintenances, setIsLoadingMaintenances] = useState(true);
+
+  const [users, setUsers] = useState([]);
+
+  const [responsibleFilter, setResponsibleFilter] = useState(null);
+
   const [barChartOptions, setBarChartOptions] = useState({
     series: [],
     chart: { type: "bar" },
@@ -21,13 +27,35 @@ export default function Dashboard() {
 
     if (router && user) {
       if (!user.features.includes("admin")) router.push("/");
-      else if (maintenances.length <= 0) fetchMaintenances();
+      else if (maintenances.length <= 0) {
+        setIsLoadingMaintenances(true);
+        fetchUsers();
+        fetchMaintenances();
+      }
     }
   }, [user, router, isLoadingUser]);
 
+  const applyFilters = (maintenances) => {
+    let filteredMaintenances = [...maintenances];
+
+    if (responsibleFilter) {
+      filteredMaintenances = filteredMaintenances.filter(
+        (m) => m.responsible === responsibleFilter,
+      );
+    }
+
+    return filteredMaintenances;
+  };
+
+  useEffect(() => {
+    if (maintenances.length > 0) {
+      const filteredMaintenances = applyFilters(maintenances);
+      setShowingMaintenances(filteredMaintenances);
+    }
+  }, [dateFilter, monthFilter, yearFilter, responsibleFilter, roleFilter]);
+
   const fetchMaintenances = async () => {
     try {
-      setIsLoadingMaintenances(true);
       const res = await fetch("/api/v1/maintenances", { method: "GET" });
       if (!res.ok)
         throw new Error("Ocorreu um erro ao carregar as manutenções");
@@ -36,6 +64,7 @@ export default function Dashboard() {
 
       if (res.status == 200) {
         setMaintenances(resBody);
+        setShowingMaintenances(resBody);
       } else {
         toast.error(resBody.message, {
           className: "alert error",
@@ -61,7 +90,7 @@ export default function Dashboard() {
 
     // Progress
     const countProgressValues = () =>
-      maintenances.reduce(
+      showingMaintenances.reduce(
         (statuses, { progress }) => {
           if (progress === "ongoing") statuses.ongoing++;
           if (progress === "concluded") statuses.concluded++;
@@ -113,7 +142,25 @@ export default function Dashboard() {
     };
 
     setBarChartOptions(progressOptions);
-  }, [maintenances]);
+  }, [showingMaintenances]);
+
+  const fetchUsers = async () => {
+    try {
+      const res = await fetch("/api/v1/users");
+      const resBody = await res.json();
+
+      if (res.status == 200) {
+        setUsers(resBody);
+      } else {
+        toast.error(resBody.message, {
+          className: "alert error",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
@@ -122,6 +169,19 @@ export default function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
+
+      <select
+        value={responsibleFilter}
+        onChange={(e) => setResponsibleFilter(e.target.value)}
+      >
+        <option value="">Responsável</option>
+        {users.map((user) => (
+          <option key={user.id} value={user.id}>
+            {user.full_name}
+          </option>
+        ))}
+      </select>
+
       <div className="charts">
         {barChartOptions && (
           <div className="charts-card">
