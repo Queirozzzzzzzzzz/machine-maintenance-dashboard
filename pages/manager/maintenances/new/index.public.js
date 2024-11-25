@@ -49,12 +49,6 @@ export default function MaintenancesNew() {
     },
   });
 
-  useEffect(() => {
-    if (formState.isSubmitSuccessful) {
-      reset();
-    }
-  }, [formState, reset]);
-
   const handleRoleChange = (event) => {
     const role = event.target.value;
     setIsPreventive(role === "preventive");
