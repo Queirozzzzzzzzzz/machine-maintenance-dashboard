@@ -344,6 +344,10 @@ form button {
   .header {
     display: flex;
   }
+
+  form {
+    width: 100%;
+  }
 }
 
 /* Small <= 768px */
@@ -372,6 +376,10 @@ form button {
   .header {
     display: flex;
   }
+
+  form {
+    width: 100%;
+  }
 }
 
 /* Extra Small <= 576px */
@@ -398,5 +406,9 @@ form button {
 
   .header {
     display: flex;
+  }
+
+  form {
+    width: 100%;
   }
 }
