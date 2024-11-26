@@ -129,28 +129,30 @@ export default function Maintenances() {
   }
 
   const renderMaintenance = (maintenance) => (
-    <div key={maintenance.id}>
-      <h3>{maintenance.machine}</h3>
-      <p>
-        <strong>Prazo:</strong> {formatDate(maintenance.expires_at)}
-      </p>
-
-      <p>
-        <strong>Criticidade:</strong>{" "}
-        {criticalityTranslations[maintenance.criticality]}
-      </p>
-
+    <div className={`card ${maintenance.criticality}`} key={maintenance.id}>
+      <div class="card-inner">
+        <p class="text-primary font-weight-bold">{maintenance.machine}</p>
+      </div>
+      <span class="text-secondary">
+        <b>Prazo:</b> {formatDate(maintenance.expires_at)}
+      </span>
+      <span class="text-secondary">
+        <b>Estado:</b> {criticalityTranslations[maintenance.criticality]}
+      </span>
       {maintenance.responsible && (
-        <p>
-          <strong>Responsável:</strong> {maintenance.responsible_name}
-        </p>
+        <span class="text-secondary">
+          <b>Responsável:</b> {maintenance.responsible_name}
+        </span>
       )}
-      <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
-      {userIsAdmin && (
-        <button onClick={() => deleteMaintenance(maintenance.id)}>
-          Excluir
-        </button>
-      )}
+
+      <div className="buttons-container">
+        <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
+        {userIsAdmin && (
+          <button onClick={() => deleteMaintenance(maintenance.id)}>
+            Excluir
+          </button>
+        )}
+      </div>
     </div>
   );
 
@@ -161,11 +163,14 @@ export default function Maintenances() {
   return (
     <>
       <h1>Manutenções</h1>
-      {maintenances.length > 0 ? (
-        maintenances.map(renderMaintenance)
-      ) : (
-        <p>Não há manutenções para exibir.</p>
-      )}
+
+      <div class="main-cards">
+        {maintenances.length > 0 ? (
+          maintenances.map(renderMaintenance)
+        ) : (
+          <p>Não há manutenções para exibir.</p>
+        )}
+      </div>
     </>
   );
 }
