@@ -46,8 +46,6 @@ body {
   height: 100vh;
 }
 
-select:hover,
-input:hover,
 button:hover {
   cursor: pointer;
   filter: contrast(200%);
@@ -325,6 +323,7 @@ form button {
 .filter-container label {
   font-weight: bold;
   margin-bottom: 0.25rem;
+  margin-right: 0.25rem;
 }
 
 .filter-container button {
