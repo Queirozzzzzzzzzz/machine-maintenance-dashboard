@@ -70,18 +70,26 @@ export default function MaintenancesPending() {
   };
 
   const renderMaintenance = (maintenance) => (
-    <div key={maintenance.id}>
-      <h3>{maintenance.machine}</h3>
-      <p>
-        <strong>Solicitado:</strong>{" "}
+    <div className={`card`} key={maintenance.id}>
+      <div class="card-inner">
+        <p class="text-primary font-weight-bold">{maintenance.machine}</p>
+      </div>
+      <span class="text-secondary">
+        <b>Solicitado:</b>{" "}
         {new Date(maintenance.created_at).toLocaleDateString()}
-      </p>
+      </span>
+      <span class="text-secondary">
+        <b>Problema:</b> {maintenance.problem}
+      </span>
 
-      <p>
-        <strong>Problema:</strong> {maintenance.problem}
-      </p>
-      <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
-      <button onClick={() => deleteMaintenance(maintenance.id)}>Excluir</button>
+      <div className="buttons-container">
+        <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
+        {userIsAdmin && (
+          <button onClick={() => deleteMaintenance(maintenance.id)}>
+            Excluir
+          </button>
+        )}
+      </div>
     </div>
   );
 
@@ -92,11 +100,14 @@ export default function MaintenancesPending() {
   return (
     <>
       <h1>Manutenções solicitadas</h1>
-      {maintenances.length > 0 ? (
-        maintenances.map(renderMaintenance)
-      ) : (
-        <p>Não há manutenções para exibir.</p>
-      )}
+
+      <div class="main-cards">
+        {maintenances.length > 0 ? (
+          maintenances.map(renderMaintenance)
+        ) : (
+          <p>Não há manutenções para exibir.</p>
+        )}
+      </div>
     </>
   );
 }

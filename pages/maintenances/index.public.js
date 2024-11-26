@@ -137,7 +137,7 @@ export default function Maintenances() {
         <b>Prazo:</b> {formatDate(maintenance.expires_at)}
       </span>
       <span class="text-secondary">
-        <b>Estado:</b> {criticalityTranslations[maintenance.criticality]}
+        <b>Criticidade:</b> {criticalityTranslations[maintenance.criticality]}
       </span>
       {maintenance.responsible && (
         <span class="text-secondary">
