@@ -386,6 +386,13 @@ form button {
     margin: 0;
     width: 100%;
   }
+
+  .signup,
+  .login {
+    width: 80vw;
+    height: 90vh;
+    padding: 10vw;
+  }
 }
 
 /* Small <= 768px */
