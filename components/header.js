@@ -80,7 +80,7 @@ export default function Header({ children }) {
                   </a>
                 </li>
 
-                <li
+                {/* <li
                   className="sidebar-list-item"
                   onClick={() => loadPage("/manager/users")}
                 >
@@ -88,7 +88,7 @@ export default function Header({ children }) {
                     <span className="material-icons-outlined">person</span>{" "}
                     Usuários
                   </a>
-                </li>
+                </li> */}
 
                 <li
                   className="sidebar-list-item"
