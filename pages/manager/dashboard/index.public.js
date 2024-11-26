@@ -134,7 +134,7 @@ export default function Dashboard() {
       ],
       chart: {
         type: "bar",
-        height: 300,
+        height: 380,
       },
       plotOptions: {
         bar: {
@@ -150,7 +150,7 @@ export default function Dashboard() {
           breakpoint: 480,
           options: {
             chart: {
-              height: 350,
+              height: 380,
             },
             legend: {
               position: "bottom",
@@ -192,6 +192,7 @@ export default function Dashboard() {
           options: {
             chart: {
               width: 300,
+              height: 300,
             },
             legend: {
               position: "bottom",
