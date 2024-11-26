@@ -46,6 +46,13 @@ body {
   height: 100vh;
 }
 
+select:hover,
+input:hover,
+button:hover {
+  cursor: pointer;
+  filter: contrast(200%);
+}
+
 /* ---------- HEADER ---------- */
 
 .header {
@@ -312,12 +319,16 @@ form button {
 /* ---------- FILTER ---------- */
 .filter-container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
 }
 
 .filter-container label {
   font-weight: bold;
   margin-bottom: 0.25rem;
+}
+
+.filter-container button {
+  margin: 0 0 0.15rem 0.5rem;
 }
 
 .filter-container select,
