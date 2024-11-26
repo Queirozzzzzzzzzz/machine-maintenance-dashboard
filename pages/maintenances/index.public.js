@@ -47,6 +47,27 @@ export default function Maintenances() {
     }
   };
 
+  const getCurrentWeekRange = () => {
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const sunday = new Date(now);
+    sunday.setDate(now.getDate() - dayOfWeek);
+    const saturday = new Date(sunday);
+    saturday.setDate(sunday.getDate() + 6);
+
+    const formatDate = (date) => date.toISOString().split("T")[0];
+
+    return {
+      start: formatDate(sunday),
+      end: formatDate(saturday),
+    };
+  };
+
+  useEffect(() => {
+    const weekRange = getCurrentWeekRange();
+    setDateFilter(weekRange);
+  }, []);
+
   const applyDateFilter = () => {
     const { start, end } = dateFilter;
 
