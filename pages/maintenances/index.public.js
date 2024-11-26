@@ -10,6 +10,7 @@ export default function Maintenances() {
   const [filteredMaintenances, setFilteredMaintenances] = useState([]);
   const [isLoadingMaintenances, setIsLoadingMaintenances] = useState(true);
   const [dateFilter, setDateFilter] = useState({ start: "", end: "" });
+  const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push("/login");
@@ -20,8 +21,8 @@ export default function Maintenances() {
   }, [user, router, isLoadingUser]);
 
   useEffect(() => {
-    applyDateFilter();
-  }, [dateFilter, maintenances]);
+    applyFilters();
+  }, [dateFilter, statusFilter, maintenances]);
 
   const fetchMaintenances = async () => {
     try {
@@ -68,23 +69,22 @@ export default function Maintenances() {
     setDateFilter(weekRange);
   }, []);
 
-  const applyDateFilter = () => {
+  const applyFilters = () => {
     const { start, end } = dateFilter;
-
-    if (!start && !end) {
-      setFilteredMaintenances(maintenances);
-      return;
-    }
 
     const filtered = maintenances.filter((maintenance) => {
       const maintenanceDate = new Date(maintenance.expires_at);
       const startDate = start ? new Date(start) : null;
       const endDate = end ? new Date(end) : null;
 
-      return (
+      const matchesDate =
         (!startDate || maintenanceDate >= startDate) &&
-        (!endDate || maintenanceDate <= endDate)
-      );
+        (!endDate || maintenanceDate <= endDate);
+
+      const matchesStatus =
+        !statusFilter || maintenance.progress === statusFilter;
+
+      return matchesDate && matchesStatus;
     });
 
     setFilteredMaintenances(filtered);
@@ -93,6 +93,10 @@ export default function Maintenances() {
   const handleDateChange = (e) => {
     const { name, value } = e.target;
     setDateFilter((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatusChange = (e) => {
+    setStatusFilter(e.target.value);
   };
 
   const renderMaintenance = (maintenance) => (
@@ -105,6 +109,9 @@ export default function Maintenances() {
       </span>
       <span className="text-secondary">
         <b>Criticidade:</b> {criticalityTranslations[maintenance.criticality]}
+      </span>
+      <span className="text-secondary">
+        <b>Status:</b> {statusTranslations[maintenance.progress]}
       </span>
       {maintenance.responsible_name && (
         <span className="text-secondary">
@@ -139,8 +146,15 @@ export default function Maintenances() {
     critical: "Crítico",
   };
 
+  const statusTranslations = {
+    ongoing: "Em andamento",
+    concluded: "Concluída",
+    aborted: "Cancelada",
+  };
+
   const clearFilters = () => {
     setDateFilter({ start: "", end: "" });
+    setStatusFilter("");
     setFilteredMaintenances(maintenances);
   };
 
@@ -195,6 +209,16 @@ export default function Maintenances() {
             value={dateFilter.end}
             onChange={handleDateChange}
           />
+        </label>
+
+        <label>
+          Status:
+          <select value={statusFilter} onChange={handleStatusChange}>
+            <option value="">Todos</option>
+            <option value="ongoing">Em andamento</option>
+            <option value="concluded">Concluída</option>
+            <option value="aborted">Cancelada</option>
+          </select>
         </label>
 
         <button onClick={clearFilters}>Limpar Filtros</button>
