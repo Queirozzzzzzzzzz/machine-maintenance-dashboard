@@ -123,6 +123,31 @@ export default function Maintenances() {
     setFilteredMaintenances(maintenances);
   };
 
+  const openMaintenance = async (id) => {
+    router.push(`/maintenances/${id}`);
+  };
+
+  const deleteMaintenance = async (id) => {
+    try {
+      const res = await fetch(`/api/v1/maintenances/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Ocorreu um erro ao excluir a manutenção.");
+
+      setMaintenances(maintenances.filter((m) => m.id !== id));
+      toast.success("Manutenção excluída com sucesso!", {
+        className: "alert success",
+        duration: 2000,
+      });
+    } catch (err) {
+      toast.error(err.message || "Ocorreu um erro ao excluir a manutenção!", {
+        className: "alert error",
+        duration: 2000,
+      });
+    }
+  };
+
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
   }
