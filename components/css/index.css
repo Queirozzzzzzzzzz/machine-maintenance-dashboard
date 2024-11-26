@@ -376,6 +376,17 @@ form button {
   form {
     width: 100%;
   }
+
+  .filter-container {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .filter-container button {
+    margin: 0;
+    width: 100%;
+  }
 }
 
 /* Small <= 768px */
@@ -408,6 +419,17 @@ form button {
   form {
     width: 100%;
   }
+
+  .filter-container {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .filter-container button {
+    margin: 0;
+    width: 100%;
+  }
 }
 
 /* Extra Small <= 576px */
@@ -437,6 +459,17 @@ form button {
   }
 
   form {
+    width: 100%;
+  }
+
+  .filter-container {
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .filter-container button {
+    margin: 0;
     width: 100%;
   }
 }
