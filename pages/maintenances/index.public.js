@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-
 import { useUser } from "pages/interface";
 import { toast } from "sonner";
 
@@ -8,7 +7,9 @@ export default function Maintenances() {
   const router = useRouter();
   const { user, isLoadingUser, userIsAdmin } = useUser();
   const [maintenances, setMaintenances] = useState([]);
+  const [filteredMaintenances, setFilteredMaintenances] = useState([]);
   const [isLoadingMaintenances, setIsLoadingMaintenances] = useState(true);
+  const [dateFilter, setDateFilter] = useState({ start: "", end: "" });
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push("/login");
@@ -18,44 +19,9 @@ export default function Maintenances() {
     }
   }, [user, router, isLoadingUser]);
 
-  const fetchResponsibleUsers = async (maintenances) => {
-    const responsibles = [...new Set(maintenances.map((m) => m.responsible))];
-
-    const promises = responsibles.map(async (r) => {
-      try {
-        if (r == null) return null;
-
-        const res = await fetch(`/api/v1/user/${r}`);
-        const resBody = await res.json();
-        return { id: r, responsible_name: resBody.full_name };
-      } catch (error) {
-        console.error(`Error fetching user ${r}:`, error);
-        return null;
-      }
-    });
-
-    return Promise.all(promises);
-  };
-
-  async function mergeResponsibleUsers(rawMaintenances, responsibleUsers) {
-    const validResponsibleUsers = responsibleUsers.filter(
-      (user) => user !== null,
-    );
-
-    return rawMaintenances.map((maintenance) => {
-      if (maintenance.responsible === null) {
-        return maintenance;
-      }
-
-      const matchingUser = validResponsibleUsers.find(
-        (user) => user.id === maintenance.responsible,
-      );
-      return {
-        ...maintenance,
-        responsible_name: matchingUser ? matchingUser.responsible_name : null,
-      };
-    });
-  }
+  useEffect(() => {
+    applyDateFilter();
+  }, [dateFilter, maintenances]);
 
   const fetchMaintenances = async () => {
     try {
@@ -65,13 +31,8 @@ export default function Maintenances() {
         throw new Error("Ocorreu um erro ao carregar as manutenções");
 
       const resBody = await res.json();
-      const responsibleUsers = await fetchResponsibleUsers(resBody);
-      const updatedMaintenances = await mergeResponsibleUsers(
-        resBody,
-        responsibleUsers,
-      );
-
-      setMaintenances(updatedMaintenances);
+      setMaintenances(resBody);
+      setFilteredMaintenances(resBody);
     } catch (err) {
       console.error("Error fetching maintenances:", err);
       toast.error(
@@ -86,65 +47,49 @@ export default function Maintenances() {
     }
   };
 
-  const openMaintenance = async (id) => {
-    router.push(`/maintenances/${id}`);
-  };
+  const applyDateFilter = () => {
+    const { start, end } = dateFilter;
 
-  const deleteMaintenance = async (id) => {
-    try {
-      const res = await fetch(`/api/v1/maintenances/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!res.ok) throw new Error("Ocorreu um erro ao excluir a manutenção.");
-
-      setMaintenances(maintenances.filter((m) => m.id !== id));
-      toast.success("Manutenção excluída com sucesso!", {
-        className: "alert success",
-        duration: 2000,
-      });
-    } catch (err) {
-      toast.error(err.message || "Ocorreu um erro ao excluir a manutenção!", {
-        className: "alert error",
-        duration: 2000,
-      });
+    if (!start && !end) {
+      setFilteredMaintenances(maintenances);
+      return;
     }
+
+    const filtered = maintenances.filter((maintenance) => {
+      const maintenanceDate = new Date(maintenance.expires_at);
+      const startDate = start ? new Date(start) : null;
+      const endDate = end ? new Date(end) : null;
+
+      return (
+        (!startDate || maintenanceDate >= startDate) &&
+        (!endDate || maintenanceDate <= endDate)
+      );
+    });
+
+    setFilteredMaintenances(filtered);
   };
 
-  const criticalityTranslations = {
-    light: "Leve",
-    moderate: "Moderado",
-    high: "Alto",
-    critical: "Crítico",
+  const handleDateChange = (e) => {
+    const { name, value } = e.target;
+    setDateFilter((prev) => ({ ...prev, [name]: value }));
   };
-
-  function formatDate(isoDate) {
-    const date = new Date(isoDate);
-
-    const utcYear = date.getUTCFullYear();
-    const utcMonth = date.getUTCMonth() + 1;
-    const utcDay = date.getUTCDate();
-
-    return `${utcDay.toString().padStart(2, "0")}/${utcMonth.toString().padStart(2, "0")}/${utcYear}`;
-  }
 
   const renderMaintenance = (maintenance) => (
     <div className={`card ${maintenance.criticality}`} key={maintenance.id}>
-      <div class="card-inner">
-        <p class="text-primary font-weight-bold">{maintenance.machine}</p>
+      <div className="card-inner">
+        <p className="text-primary font-weight-bold">{maintenance.machine}</p>
       </div>
-      <span class="text-secondary">
+      <span className="text-secondary">
         <b>Prazo:</b> {formatDate(maintenance.expires_at)}
       </span>
-      <span class="text-secondary">
+      <span className="text-secondary">
         <b>Criticidade:</b> {criticalityTranslations[maintenance.criticality]}
       </span>
-      {maintenance.responsible && (
-        <span class="text-secondary">
+      {maintenance.responsible_name && (
+        <span className="text-secondary">
           <b>Responsável:</b> {maintenance.responsible_name}
         </span>
       )}
-
       <div className="buttons-container">
         <button onClick={() => openMaintenance(maintenance.id)}>Abrir</button>
         {userIsAdmin && (
@@ -156,6 +101,28 @@ export default function Maintenances() {
     </div>
   );
 
+  function formatDate(isoDate) {
+    const date = new Date(isoDate);
+
+    const utcYear = date.getUTCFullYear();
+    const utcMonth = date.getUTCMonth() + 1;
+    const utcDay = date.getUTCDate();
+
+    return `${utcDay.toString().padStart(2, "0")}/${utcMonth.toString().padStart(2, "0")}/${utcYear}`;
+  }
+
+  const criticalityTranslations = {
+    light: "Leve",
+    moderate: "Moderado",
+    high: "Alto",
+    critical: "Crítico",
+  };
+
+  const clearFilters = () => {
+    setDateFilter({ start: "", end: "" });
+    setFilteredMaintenances(maintenances);
+  };
+
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
   }
@@ -164,9 +131,32 @@ export default function Maintenances() {
     <>
       <h1>Manutenções</h1>
 
-      <div class="main-cards">
-        {maintenances.length > 0 ? (
-          maintenances.map(renderMaintenance)
+      <div className="filter-container">
+        <label>
+          Data de Início:
+          <input
+            type="date"
+            name="start"
+            value={dateFilter.start}
+            onChange={handleDateChange}
+          />
+        </label>
+        <label>
+          Data de Fim:
+          <input
+            type="date"
+            name="end"
+            value={dateFilter.end}
+            onChange={handleDateChange}
+          />
+        </label>
+
+        <button onClick={clearFilters}>Limpar Filtros</button>
+      </div>
+
+      <div className="main-cards">
+        {filteredMaintenances.length > 0 ? (
+          filteredMaintenances.map(renderMaintenance)
         ) : (
           <p>Não há manutenções para exibir.</p>
         )}
