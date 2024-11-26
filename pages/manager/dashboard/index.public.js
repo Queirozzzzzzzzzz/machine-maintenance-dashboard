@@ -205,6 +205,11 @@ export default function Dashboard() {
     setRoleData(roleOptions);
   }, [showingMaintenances]);
 
+  const clearFilters = () => {
+    setResponsibleFilter(null);
+    setShowingMaintenances(maintenances);
+  };
+
   if (isLoadingUser || isLoadingMaintenances) {
     return <div>Carregando...</div>;
   }
@@ -213,19 +218,26 @@ export default function Dashboard() {
     <div>
       <h1>Dashboard</h1>
 
-      {users && (
-        <select
-          value={responsibleFilter || ""}
-          onChange={(e) => setResponsibleFilter(e.target.value)}
-        >
-          <option value="">Responsável</option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.full_name}
-            </option>
-          ))}
-        </select>
-      )}
+      <div className="filter-container">
+        {users && (
+          <label>
+            Responsável
+            <select
+              value={responsibleFilter || ""}
+              onChange={(e) => setResponsibleFilter(e.target.value)}
+            >
+              <option value="">Todos</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.full_name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+
+        <button onClick={clearFilters}>Limpar Filtros</button>
+      </div>
 
       <div className="charts">
         {progressData.series && (

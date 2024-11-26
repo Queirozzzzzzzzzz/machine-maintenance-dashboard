@@ -320,6 +320,8 @@ form button {
   margin-bottom: 0.25rem;
 }
 
+.filter-container select,
+.filter-container textarea,
 .filter-container input {
   border: none;
   padding: 0.5rem;
