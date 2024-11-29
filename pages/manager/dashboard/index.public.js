@@ -242,6 +242,7 @@ export default function Dashboard() {
 
     setRoleData(roleOptions);
 
+    // Quantity
     const countMaintenancesPerMonth = () => {
       const counts = Array(12).fill(0);
 
