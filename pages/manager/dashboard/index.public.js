@@ -22,6 +22,7 @@ export default function Dashboard() {
     chart: { type: "bar" },
   });
   const [roleData, setRoleData] = useState([]);
+  const [maintenanceCountData, setMaintenanceCountData] = useState([]);
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push("/");
@@ -203,6 +204,64 @@ export default function Dashboard() {
     };
 
     setRoleData(roleOptions);
+
+    const countMaintenancesPerMonth = () => {
+      const counts = Array(12).fill(0);
+
+      showingMaintenances.forEach(({ expires_at }) => {
+        const date = new Date(expires_at);
+        const month = date.getMonth();
+        counts[month]++;
+      });
+
+      return counts;
+    };
+
+    const maintenanceCounts = countMaintenancesPerMonth();
+
+    const maintenanceOptions = {
+      series: [
+        {
+          name: "Manutenções",
+          data: maintenanceCounts,
+        },
+      ],
+      chart: {
+        type: "line",
+        height: 380,
+      },
+      xaxis: {
+        categories: [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro",
+        ],
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              height: 300,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
+    setMaintenanceCountData(maintenanceOptions);
   }, [showingMaintenances]);
 
   const clearFilters = () => {
@@ -262,6 +321,20 @@ export default function Dashboard() {
                 options={roleData}
                 series={roleData.series}
                 type="pie"
+                height={350}
+              />
+            </div>
+          </div>
+        )}
+
+        {maintenanceCountData.series && (
+          <div className="charts-card">
+            <p className="chart-title">Quantidade de Manutenções por Mês</p>
+            <div id="line-chart">
+              <Chart
+                options={maintenanceCountData}
+                series={maintenanceCountData.series}
+                type="line"
                 height={350}
               />
             </div>
