@@ -19,7 +19,8 @@ async function findAll() {
   const query = {
     text: `
         SELECT * 
-        FROM available_days;
+        FROM available_days
+        ORDER BY date;
         `,
     values: [],
   };
