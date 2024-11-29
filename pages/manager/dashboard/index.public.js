@@ -193,7 +193,7 @@ export default function Dashboard() {
         position: "bottom",
         fontSize: "14px",
         formatter: (val, opts) =>
-          `${val} (${opts.w.globals.series[opts.seriesIndex]}%)`,
+          `${val} (${opts.w.globals.series[opts.seriesIndex]})`,
       },
       responsive: [
         {
