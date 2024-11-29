@@ -23,7 +23,7 @@ export default function Dashboard() {
     chart: { type: "bar" },
   });
   const [roleData, setRoleData] = useState([]);
-  const [maintenanceCountData, setMaintenanceCountData] = useState([]);
+  const [quantityData, setQuantityData] = useState([]);
 
   useEffect(() => {
     if (router && !user && !isLoadingUser) router.push("/");
@@ -116,6 +116,63 @@ export default function Dashboard() {
   useEffect(() => {
     if (maintenances.length <= 0) return;
 
+    // Quantity
+    const countQuantityValues = () => {
+      const counts = Array(12).fill(0);
+
+      showingMaintenances.forEach(({ expires_at }) => {
+        const date = new Date(expires_at);
+        const month = date.getMonth();
+        counts[month]++;
+      });
+
+      return counts;
+    };
+
+    const quantityValues = countQuantityValues();
+
+    const maintenanceOptions = {
+      series: [
+        {
+          name: "Manutenções",
+          data: quantityValues,
+        },
+      ],
+      chart: {
+        type: "line",
+        height: 380,
+      },
+      xaxis: {
+        categories: [
+          "Janeiro",
+          "Fevereiro",
+          "Março",
+          "Abril",
+          "Maio",
+          "Junho",
+          "Julho",
+          "Agosto",
+          "Setembro",
+          "Outubro",
+          "Novembro",
+          "Dezembro",
+        ],
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              height: 300,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
     // Progress
     const countProgressValues = () =>
       showingMaintenances.reduce(
@@ -168,8 +225,6 @@ export default function Dashboard() {
         },
       ],
     };
-
-    setProgressData(progressOptions);
 
     // Role
     const countRoleValues = () =>
@@ -240,66 +295,9 @@ export default function Dashboard() {
       },
     };
 
+    setProgressData(progressOptions);
     setRoleData(roleOptions);
-
-    // Quantity
-    const countMaintenancesPerMonth = () => {
-      const counts = Array(12).fill(0);
-
-      showingMaintenances.forEach(({ expires_at }) => {
-        const date = new Date(expires_at);
-        const month = date.getMonth();
-        counts[month]++;
-      });
-
-      return counts;
-    };
-
-    const maintenanceCounts = countMaintenancesPerMonth();
-
-    const maintenanceOptions = {
-      series: [
-        {
-          name: "Manutenções",
-          data: maintenanceCounts,
-        },
-      ],
-      chart: {
-        type: "line",
-        height: 380,
-      },
-      xaxis: {
-        categories: [
-          "Janeiro",
-          "Fevereiro",
-          "Março",
-          "Abril",
-          "Maio",
-          "Junho",
-          "Julho",
-          "Agosto",
-          "Setembro",
-          "Outubro",
-          "Novembro",
-          "Dezembro",
-        ],
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              height: 300,
-            },
-            legend: {
-              position: "bottom",
-            },
-          },
-        },
-      ],
-    };
-
-    setMaintenanceCountData(maintenanceOptions);
+    setQuantityData(maintenanceOptions);
   }, [showingMaintenances]);
 
   const clearFilters = () => {
@@ -346,7 +344,7 @@ export default function Dashboard() {
           >
             <option value="all">Todos os Anos</option>
             {Array.from({ length: 11 }, (_, i) => {
-              const year = new Date().getFullYear() - 5 + i;
+              const year = new Date().getFullYear() + 5 - i;
               return (
                 <option key={year} value={year}>
                   {year}
@@ -388,13 +386,13 @@ export default function Dashboard() {
           </div>
         )}
 
-        {maintenanceCountData.series && (
+        {quantityData.series && (
           <div className="charts-card">
             <p className="chart-title">Quantidade de Manutenções por Mês</p>
             <div id="line-chart">
               <Chart
-                options={maintenanceCountData}
-                series={maintenanceCountData.series}
+                options={quantityData}
+                series={quantityData.series}
                 type="line"
                 height={350}
               />
