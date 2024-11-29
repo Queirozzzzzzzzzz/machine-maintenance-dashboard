@@ -13,13 +13,7 @@ describe("INJECT maintenances", () => {
       await reqB.buildAdmin();
 
       const generateRandomData = () => ({
-        machine: getRandomString([
-          "Máquina 1",
-          "Máquina 2",
-          "Máquina 3",
-          "Máquina 4",
-          "Máquina 5",
-        ]),
+        machine: getRandomString(["Esmerilhadeira", "Jateadora", "Lixadeira"]),
         role: getRandomString([
           "preventive",
           "corrective",
