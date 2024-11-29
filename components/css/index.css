@@ -400,6 +400,11 @@ form button {
     height: 90vh;
     padding: 10vw;
   }
+
+  .signup form,
+  .login form {
+    width: 85vw;
+  }
 }
 
 /* Small <= 768px */
@@ -443,6 +448,11 @@ form button {
     margin: 0;
     width: 100%;
   }
+
+  .signup form,
+  .login form {
+    width: 85vw;
+  }
 }
 
 /* Extra Small <= 576px */
@@ -484,5 +494,10 @@ form button {
   .filter-container button {
     margin: 0;
     width: 100%;
+  }
+
+  .signup form,
+  .login form {
+    width: 85vw;
   }
 }
