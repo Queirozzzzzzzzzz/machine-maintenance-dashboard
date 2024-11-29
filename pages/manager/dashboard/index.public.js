@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [users, setUsers] = useState([]);
 
   const [responsibleFilter, setResponsibleFilter] = useState(null);
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear());
 
   const [progressData, setProgressData] = useState({
     series: [],
@@ -46,6 +47,13 @@ export default function Dashboard() {
       );
     }
 
+    if (yearFilter !== null) {
+      filteredMaintenances = filteredMaintenances.filter((m) => {
+        const maintenanceYear = new Date(m.expires_at).getFullYear();
+        return maintenanceYear === yearFilter;
+      });
+    }
+
     return filteredMaintenances;
   };
 
@@ -54,7 +62,7 @@ export default function Dashboard() {
       const filteredMaintenances = applyFilters(maintenances);
       setShowingMaintenances(filteredMaintenances);
     }
-  }, [responsibleFilter]);
+  }, [responsibleFilter, yearFilter]);
 
   const fetchUsers = async () => {
     try {
@@ -200,11 +208,11 @@ export default function Dashboard() {
           breakpoint: 480,
           options: {
             chart: {
-              height: "350px", // Ensure it fits smaller screens
+              height: "350px",
             },
             legend: {
               position: "bottom",
-              fontSize: "12px", // Smaller font size for mobile
+              fontSize: "12px",
               markers: {
                 width: 12,
                 height: 12,
@@ -213,9 +221,9 @@ export default function Dashboard() {
             plotOptions: {
               pie: {
                 dataLabels: {
-                  offsetY: -20, // Adjust data labels' positioning
+                  offsetY: -20,
                   style: {
-                    fontSize: "10px", // Make sure the labels are readable
+                    fontSize: "10px",
                   },
                 },
               },
@@ -225,9 +233,9 @@ export default function Dashboard() {
       ],
       dataLabels: {
         enabled: true,
-        formatter: (val) => `${val.toFixed(1)}%`, // Ensure percentage labels are shown
+        formatter: (val) => `${val.toFixed(1)}%`,
         style: {
-          fontSize: "12px", // Adjust font size for data labels
+          fontSize: "12px",
         },
       },
     };
@@ -295,6 +303,7 @@ export default function Dashboard() {
 
   const clearFilters = () => {
     setResponsibleFilter(null);
+    setYearFilter(null);
     setShowingMaintenances(maintenances);
   };
 
@@ -323,6 +332,28 @@ export default function Dashboard() {
             </select>
           </label>
         )}
+
+        <label>
+          Ano
+          <select
+            value={yearFilter || "all"}
+            onChange={(e) =>
+              setYearFilter(
+                e.target.value === "all" ? null : parseInt(e.target.value),
+              )
+            }
+          >
+            <option value="all">Todos os Anos</option>
+            {Array.from({ length: 11 }, (_, i) => {
+              const year = new Date().getFullYear() - 5 + i;
+              return (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              );
+            })}
+          </select>
+        </label>
 
         <button onClick={clearFilters}>Limpar Filtros</button>
       </div>
