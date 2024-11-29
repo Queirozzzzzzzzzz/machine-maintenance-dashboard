@@ -91,7 +91,7 @@ async function createUser(userObj) {
   let email = `${randomCharacters}@email.com`;
 
   const info = {
-    full_name: userObj?.full_name || "Valid User Full Name",
+    full_name: userObj?.full_name || randomCharacters,
     email: userObj?.email || email,
     password: userObj?.password || "validuserpassword",
   };
