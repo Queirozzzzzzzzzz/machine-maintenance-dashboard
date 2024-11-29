@@ -61,12 +61,19 @@ export default function Maintenance() {
         }),
       });
 
-      if (res.status == 200) {
-        toast.success("Manutenção concluida com sucesso!", {
+      if (res.status === 200) {
+        const updatedMaintenance = {
+          ...maintenance,
+          progress: "concluded",
+          concluded_at: new Date().toISOString(),
+        };
+
+        setMaintenance(updatedMaintenance);
+
+        toast.success("Manutenção concluída com sucesso!", {
           className: "alert success",
           duration: 2000,
         });
-        window.location.reload();
       } else {
         const resBody = await res.json();
         console.error(resBody);
@@ -93,12 +100,19 @@ export default function Maintenance() {
         }),
       });
 
-      if (res.status == 200) {
+      if (res.status === 200) {
+        const updatedMaintenance = {
+          ...maintenance,
+          progress: "aborted",
+          concluded_at: new Date().toISOString(),
+        };
+
+        setMaintenance(updatedMaintenance);
+
         toast.success("Manutenção cancelada com sucesso!", {
           className: "alert success",
           duration: 2000,
         });
-        window.location.reload();
       } else {
         const resBody = await res.json();
         console.error(resBody);
@@ -112,30 +126,32 @@ export default function Maintenance() {
     }
   };
 
-  const editMaintenance = async (id) => {
-    router.push(`/maintenances/${id}/edit`);
-  };
-
   const deleteMaintenance = async (id) => {
     try {
       const res = await fetch(`/api/v1/maintenances/${id}`, {
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Ocorreu um erro ao excluir a manutenção.");
+      if (res.ok) {
+        toast.success("Manutenção excluída com sucesso!", {
+          className: "alert success",
+          duration: 2000,
+        });
 
-      toast.success("Manutenção excluída com sucesso!", {
-        className: "alert success",
-        duration: 2000,
-      });
-
-      router.push("/maintenances");
+        router.push("/maintenances");
+      } else {
+        throw new Error("Ocorreu um erro ao excluir a manutenção.");
+      }
     } catch (err) {
       toast.error(err.message || "Ocorreu um erro ao excluir a manutenção!", {
         className: "alert error",
         duration: 2000,
       });
     }
+  };
+
+  const editMaintenance = async (id) => {
+    router.push(`/maintenances/${id}/edit`);
   };
 
   if (isLoadingUser || isLoadingMaintenance) {

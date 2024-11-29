@@ -139,15 +139,16 @@ export default function Maintenance() {
         body: JSON.stringify(filteredData),
       });
 
+      const resBody = await res.json();
+
       if (res.status == 200) {
         toast.success("Manutenção atualizada com sucesso.", {
           className: "alert success",
           duration: 2000,
         });
 
-        window.location.reload();
+        setMaintenance(resBody);
       } else {
-        const resBody = await res.json();
         toast.error(resBody.message, {
           className: "alert error",
           duration: 2000,
