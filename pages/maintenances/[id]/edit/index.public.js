@@ -47,6 +47,7 @@ export default function Maintenance() {
   }, [router.query.id, isLoadingMaintenance]);
 
   function formatDate(isoDate) {
+    if (!isoDate) return null;
     const date = new Date(isoDate);
 
     const utcYear = date.getUTCFullYear();
@@ -61,7 +62,7 @@ export default function Maintenance() {
     const resBody = await res.json();
 
     if (res.status == 200) {
-      resBody.expires_at = formatDate(resBody.expires_at);
+      resBody.expires_at = formatDate(resBody.expires_at) || null;
       if (resBody.role === "preventive") setIsPreventive(true);
       setFormData(resBody);
       setIsLoadingMaintenance(false);
