@@ -185,22 +185,51 @@ export default function Dashboard() {
       ],
       chart: {
         type: "pie",
+        width: "100%",
+        height: "400px",
       },
       labels: ["Preventiva", "Preditiva", "Corretiva"],
+      legend: {
+        position: "bottom",
+        fontSize: "14px",
+        formatter: (val, opts) =>
+          `${val} (${opts.w.globals.series[opts.seriesIndex]}%)`,
+      },
       responsive: [
         {
           breakpoint: 480,
           options: {
             chart: {
-              width: 300,
-              height: 300,
+              height: "350px", // Ensure it fits smaller screens
             },
             legend: {
               position: "bottom",
+              fontSize: "12px", // Smaller font size for mobile
+              markers: {
+                width: 12,
+                height: 12,
+              },
+            },
+            plotOptions: {
+              pie: {
+                dataLabels: {
+                  offsetY: -20, // Adjust data labels' positioning
+                  style: {
+                    fontSize: "10px", // Make sure the labels are readable
+                  },
+                },
+              },
             },
           },
         },
       ],
+      dataLabels: {
+        enabled: true,
+        formatter: (val) => `${val.toFixed(1)}%`, // Ensure percentage labels are shown
+        style: {
+          fontSize: "12px", // Adjust font size for data labels
+        },
+      },
     };
 
     setRoleData(roleOptions);
